@@ -1,35 +1,43 @@
-# NL Defensie Materieelherkenning – Speaking Trainer (Offline images)
+# NL Defensie Materieelherkenning – Speaking Trainer (Landmacht)
 
-This version is designed for **GitHub Pages** and works **without hotlinking** images.
+Static (offline-friendly) speaking trainer for A2/B1 English:
+- Step 1: choose **classification** (5 options)
+- Step 2: say + type the **platform name**
+- After Next: shows **correct class + name** with the same image
+- Each round: **10 random vehicles** (new mix every restart)
 
-## Step 1: Open the app
-Open `app/index.html` (Chrome/Edge).
-
-## Step 2: Build the full Landmacht set with OFFLINE images
-Run on your own laptop (internet required):
-
-```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-pip install requests pillow beautifulsoup4
-python build_landmacht_offline.py --out app --size 900x600 --delay 0.6
+## Repo structure (important)
+```
+.
+├── app/                 # GitHub Pages site (static)
+│   ├── index.html
+│   ├── data.json
+│   └── images/          # <-- put your 46 JPGs here (same filenames as assets)
+├── tools/               # helper scripts
+└── spreadsheets/        # Excel templates
 ```
 
-This will:
-- download all Landmacht vehicle images from Defensie.nl item pages
-- resize them to **900×600**
-- save them into `app/images/`
-- rewrite `app/data.json` to include all Landmacht vehicles
+## Quick start (local)
+1) Put your images in `app/images/` (JPG).
+2) Open `app/index.html` in a browser.
 
-## Input mode: typing vs multiple choice
-Open `app/data.json` and change:
+## Update / rebuild data.json from your images (optional)
+From repo root:
+```bash
+python3 tools/generate_data_from_images.py --images app/images --out app/data.json
+```
 
-- `settings.inputMode` = `"type"` (students type the name) **or**
-- `settings.inputMode` = `"mcq"` (4 multiple-choice options)
+## Apply classifications from Excel (optional)
+Fill `spreadsheets/vehicle_classification_template_filled.xlsx` (or your own), then:
+```bash
+python3 tools/apply_classifications.py --data app/data.json --in spreadsheets/vehicle_classification_template_filled.xlsx
+```
 
-## GitHub Pages
-Settings → Pages → Deploy from branch → folder `/app`.
+## Publish online with GitHub Pages (recommended)
+This repo includes a GitHub Actions workflow that publishes the `app/` folder to GitHub Pages.
 
-## Notes
-Keep attribution to Defensie.nl when publishing.
+Steps:
+1. Create a new GitHub repo and push these files.
+2. In GitHub: **Settings → Pages**
+   - Source: **GitHub Actions**
+3. Open the Pages URL GitHub shows.
