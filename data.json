@@ -1,0 +1,59 @@
+{
+  "title": "NL Defensie Materieelherkenning \u2013 Speaking Trainer",
+  "branches": [
+    {
+      "id": "army",
+      "label": "Landmacht"
+    },
+    {
+      "id": "navy",
+      "label": "Marine"
+    },
+    {
+      "id": "airforce",
+      "label": "Luchtmacht"
+    },
+    {
+      "id": "helicopters",
+      "label": "Helikopters"
+    }
+  ],
+  "questions": [
+    {
+      "id": "a1",
+      "branch": "army",
+      "asset": "army",
+      "answer": "Dutch Army vehicle",
+      "aliases": [
+        "dutch army vehicle"
+      ]
+    },
+    {
+      "id": "n1",
+      "branch": "navy",
+      "asset": "navy",
+      "answer": "Dutch Navy ship",
+      "aliases": [
+        "dutch navy ship"
+      ]
+    },
+    {
+      "id": "f1",
+      "branch": "airforce",
+      "asset": "airforce",
+      "answer": "Dutch Air Force aircraft",
+      "aliases": [
+        "dutch air force aircraft"
+      ]
+    },
+    {
+      "id": "h1",
+      "branch": "helicopters",
+      "asset": "helicopters",
+      "answer": "Dutch helicopter",
+      "aliases": [
+        "dutch helicopter"
+      ]
+    }
+  ]
+}

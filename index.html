@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>NL Defence Speaking</title></head>
+<body style="background:#0b1220;color:white;font-family:Arial">
+<h2>NL Defensie Materieelherkenning</h2>
+<div id="tabs"></div>
+<p id="q"></p>
+<img id="img" style="max-width:900px"><br>
+<select id="sel"></select><br><br>
+<button onclick="next()">Next</button>
+<script>
+let DATA, branch="army", idx=0;
+fetch("data.json").then(r=>r.json()).then(d=>{DATA=d;renderTabs();render();});
+function renderTabs(){
+ let t=document.getElementById("tabs");t.innerHTML="";
+ DATA.branches.forEach(b=>{
+  let btn=document.createElement("button");
+  btn.textContent=b.label;
+  btn.onclick=()=>{branch=b.id;idx=0;render();};
+  t.appendChild(btn);
+ });
+}
+function qs(){return DATA.questions.filter(x=>x.branch===branch);}
+function render(){
+ let q=qs()[idx];
+ document.getElementById("q").textContent="Identify the platform";
+ document.getElementById("img").src="images/"+q.asset+".jpg";
+ let s=document.getElementById("sel");s.innerHTML="";
+ qs().forEach(o=>{let op=document.createElement("option");op.text=o.answer;s.appendChild(op);});
+}
+function next(){idx=(idx+1)%qs().length;render();}
+</script>
+</body></html>
