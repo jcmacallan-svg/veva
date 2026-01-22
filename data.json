@@ -1,5 +1,11 @@
 {
-  "title": "NL Defensie Materieelherkenning \u2013 Speaking Trainer",
+  "version": "4.1-landmacht",
+  "title": "NL Defensie Materieelherkenning – Speaking Trainer",
+  "microTheory": [
+    "Quick reminder: WHAT for vehicles; HURT for helicopters.",
+    "Goal: speaking practice (A2/B1). Say 2–3 short English sentences per image.",
+    "During the quiz you do NOT see the correct answer; only streak + progress. Full overview appears at the end."
+  ],
   "branches": [
     {
       "id": "army",
@@ -7,53 +13,549 @@
     },
     {
       "id": "navy",
-      "label": "Marine"
+      "label": "Marine (later)"
     },
     {
       "id": "airforce",
-      "label": "Luchtmacht"
+      "label": "Luchtmacht (later)"
     },
     {
       "id": "helicopters",
-      "label": "Helikopters"
+      "label": "Helikopters (later)"
     }
+  ],
+  "speakingFrames": [
+    "I think this is a ___.",
+    "It is used for ___ (transport / attack / support).",
+    "I can see ___ (wheels / tracks).",
+    "It looks ___ (big / heavy / fast).",
+    "Because of ___, I choose ___."
   ],
   "questions": [
     {
-      "id": "a1",
+      "id": "army_actros-brandweerwagen",
       "branch": "army",
-      "asset": "army",
-      "answer": "Dutch Army vehicle",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/actros-brandweerwagen/actros-brandweerwagens",
+      "answer": "Actros-brandweerwagen",
       "aliases": [
-        "dutch army vehicle"
-      ]
+        "actros-brandweerwagen"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/actros-brandweerwagen"
     },
     {
-      "id": "n1",
-      "branch": "navy",
-      "asset": "navy",
-      "answer": "Dutch Navy ship",
+      "id": "army_amarok-pick-uptruck",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/amarok-terreinwagen/amarok-1.jpg",
+      "answer": "Amarok-pick-uptruck",
       "aliases": [
-        "dutch navy ship"
-      ]
+        "amarok-pick-uptruck"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/amarok-terreinwagen"
     },
     {
-      "id": "f1",
-      "branch": "airforce",
-      "asset": "airforce",
-      "answer": "Dutch Air Force aircraft",
+      "id": "army_anaconda-terreinwagen",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/anaconda-terreinwagen/d181212jk2329.jpg",
+      "answer": "Anaconda-terreinwagen",
       "aliases": [
-        "dutch air force aircraft"
-      ]
+        "anaconda-terreinwagen"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/anaconda-terreinwagen"
     },
     {
-      "id": "h1",
-      "branch": "helicopters",
-      "asset": "helicopters",
-      "answer": "Dutch helicopter",
+      "id": "army_bandvagn-206-rupsvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/band-vagn-bv-206-d6/band-vagn-bv-206-d6.jpg",
+      "answer": "Bandvagn 206-rupsvoertuig",
       "aliases": [
-        "dutch helicopter"
-      ]
+        "bandvagn 206-rupsvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/band-vagn-bv-206-d6"
+    },
+    {
+      "id": "army_bandvagn-s10-rupsvoertuig-viking",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/viking-bv-s10/viking-283.jpg",
+      "answer": "Bandvagn S10-rupsvoertuig (Viking)",
+      "aliases": [
+        "bandvagn s10-rupsvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/viking-bv-s10"
+    },
+    {
+      "id": "army_boxer-pantserwielvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/boxer/boxer.jpg",
+      "answer": "Boxer-pantserwielvoertuig",
+      "aliases": [
+        "boxer-pantserwielvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/boxer"
+    },
+    {
+      "id": "army_bushmaster",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/bushmaster/bushmaster.jpg",
+      "answer": "Bushmaster",
+      "aliases": [
+        "bushmaster"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/bushmaster"
+    },
+    {
+      "id": "army_cbrn-ontsmettingssysteem-zware-uitvoering",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/nbc-ontsmettingssysteem-hoger-echelon/nbc-ontsmettingssysteem.jpg",
+      "answer": "CBRN-ontsmettingssysteem (zware uitvoering)",
+      "aliases": [
+        "cbrn-ontsmettingssysteem"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/cbrn-ontsmettingssysteem"
+    },
+    {
+      "id": "army_cv90-infanteriegevechtsvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/combat-vehicle-90/d180919vk0228.jpg",
+      "answer": "CV90-infanteriegevechtsvoertuig",
+      "aliases": [
+        "cv90-infanteriegevechtsvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/combat-vehicle-90"
+    },
+    {
+      "id": "army_daf-trekker-opleggercombinatie",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/daf-tropco-650kn/daf-tropco-650kn.jpg",
+      "answer": "DAF Trekker-opleggercombinatie",
+      "aliases": [
+        "daf trekker-opleggercombinatie"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/daf-tropco-650kn"
+    },
+    {
+      "id": "army_daf-ya-4442-de-4-tonner",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/daf-ya-4442/d150423sh1304.jpg",
+      "answer": "DAF YA-4442, ‘de 4-tonner’",
+      "aliases": [
+        "daf ya-4442,",
+        "daf ya-4442, ‘de 4-tonner’"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/daf-ya-4442"
+    },
+    {
+      "id": "army_daf-yac-2300",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/daf-yac-2300/daf-yac-2300.jpg",
+      "answer": "DAF YAC-2300",
+      "aliases": [
+        "daf yac-2300"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/daf-yac-2300"
+    },
+    {
+      "id": "army_daf-takelwagens",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/daf-takelwagens/daf-ybb-95-480-takelauto.jpg",
+      "answer": "DAF-takelwagens",
+      "aliases": [
+        "daf-takelwagens"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/daf-takelwagens"
+    },
+    {
+      "id": "army_e-one-titan-crashtender",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/e-one-titan-crashtender/e-one-titan-crashtender.jpg",
+      "answer": "E-One Titan-crashtender",
+      "aliases": [
+        "e-one titan-crashtender"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/e-one-titan-crashtender"
+    },
+    {
+      "id": "army_explosievenrobot-dragon-runner",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/explosievenrobot-dragon-runner/explosievenrobot-dragon-runner",
+      "answer": "Explosievenrobot Dragon Runner",
+      "aliases": [
+        "explosievenrobot dragon",
+        "explosievenrobot dragon runner"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/explosievenrobot-dragon-runner"
+    },
+    {
+      "id": "army_explosievenrobot-telemax",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/explosievenrobot-telemax/grijphand-telemax",
+      "answer": "Explosievenrobot Telemax",
+      "aliases": [
+        "explosievenrobot telemax"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/explosievenrobot-telemax"
+    },
+    {
+      "id": "army_explosievenrobot-teodor",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/explosievenrobot-teodor/zijaanzicht-explosievenrobot-teodor",
+      "answer": "Explosievenrobot tEODor",
+      "aliases": [
+        "explosievenrobot teodor"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/explosievenrobot-teodor"
+    },
+    {
+      "id": "army_fennek-verkenningsvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/fennek-bewakings-en-verkenningsvoertuig/fennek-22865.jpg",
+      "answer": "Fennek-verkenningsvoertuig",
+      "aliases": [
+        "fennek-verkenningsvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/fennek-bewakings--en-verkenningsvoertuig"
+    },
+    {
+      "id": "army_fuchs-pantservoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/fuchs-pantservoertuig/fuchs-eov-pantservoertuig.jpg",
+      "answer": "Fuchs-pantservoertuig",
+      "aliases": [
+        "fuchs-pantservoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/fuchs-pantserwielvoertuig"
+    },
+    {
+      "id": "army_grondverzetmachines",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/grondverzetmachines/20200901mar0348.jpg",
+      "answer": "Grondverzetmachines",
+      "aliases": [
+        "grondverzetmachines"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/grondverzetmachines"
+    },
+    {
+      "id": "army_ktm-motorfiets",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/ktm-motoren/d160317lm10001.jpg",
+      "answer": "KTM-motorfiets",
+      "aliases": [
+        "ktm-motorfiets"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/ktm-motorfiets"
+    },
+    {
+      "id": "army_land-rover-defender-110xd-ww",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/land-rover-defender-110xd-ww/land-rover-defender-110xd-ww.jpg",
+      "answer": "Land Rover Defender 110XD WW",
+      "aliases": [
+        "land rover",
+        "land rover defender 110xd ww"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/land-rover-defender-110xd-ww"
+    },
+    {
+      "id": "army_leopard-1-beach-armoured-recovery-vehicle",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/leopard-1-beach-armoured-recovery-vehicle-barv/leopard-1-barv",
+      "answer": "Leopard 1-Beach Armoured Recovery Vehicle",
+      "aliases": [
+        "leopard 1-beach",
+        "leopard 1-beach armoured recovery vehicle"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/leopard-1-beach-armoured-recovery-vehicle-barv"
+    },
+    {
+      "id": "army_leopard-1-bergingstank",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/leopard-1-bergingstank/leopard-1-berging",
+      "answer": "Leopard 1-bergingstank",
+      "aliases": [
+        "leopard 1-bergingstank"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/leopard-1-bergingstank"
+    },
+    {
+      "id": "army_leopard-2-a6-gevechtstank",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/leopard-2-gevechtstank/d151001ed006.jpg",
+      "answer": "Leopard 2 A6-gevechtstank",
+      "aliases": [
+        "leopard 2",
+        "leopard 2 a6-gevechtstank"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/leopard-2a6-gevechtstank"
+    },
+    {
+      "id": "army_leopard-2-bergingstank-buffel",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/leopard-2-bergingstank/leopard-2-berging-spoor.jpg",
+      "answer": "Leopard 2-bergingstank (Buffel)",
+      "aliases": [
+        "leopard 2-bergingstank"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/leopard-2-bergingstank-buffel"
+    },
+    {
+      "id": "army_leopard-2-brugleggende-tank-leguaan",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/leopard-2-brugleggende-tank-leguaan/20230707gtf1005.jpg",
+      "answer": "Leopard 2-brugleggende tank (Leguaan)",
+      "aliases": [
+        "leopard 2-brugleggende",
+        "leopard 2-brugleggende tank"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/leopard-2-brugleggende-tank-leguaan"
+    },
+    {
+      "id": "army_leopard-2-geniedoorbraaksysteem-kodiak",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/leopard-2-genietank-kodiak/kodiak",
+      "answer": "Leopard 2-geniedoorbraaksysteem (Kodiak)",
+      "aliases": [
+        "leopard 2-geniedoorbraaksysteem"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/leopard-2-geniedoorbraaksysteem-kodiak"
+    },
+    {
+      "id": "army_luchtmobiel-speciaal-voertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/luchtmobiel-speciaal-voertuig/luchtmobiel-speciaal-voertuig.jpg",
+      "answer": "Luchtmobiel Speciaal Voertuig",
+      "aliases": [
+        "luchtmobiel speciaal",
+        "luchtmobiel speciaal voertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/luchtmobiel-speciaal-voertuig"
+    },
+    {
+      "id": "army_manticore-terreinvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/manticore/manticore.jpg",
+      "answer": "Manticore-terreinvoertuig",
+      "aliases": [
+        "manticore-terreinvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/manticore-terreinvoertuig"
+    },
+    {
+      "id": "army_meldkamer-op-locatie",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/meldkamer-op-locatie-mol/meldkamer-op-locatie-kmar",
+      "answer": "Meldkamer op Locatie",
+      "aliases": [
+        "meldkamer op",
+        "meldkamer op locatie"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/meldkamer-op-locatie-mol"
+    },
+    {
+      "id": "army_mercedes-benz-290gd",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/mercedes-benz-290gd/mercedes-benz-290gd.jpg",
+      "answer": "Mercedes-Benz 290GD",
+      "aliases": [
+        "mercedes-benz 290gd"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/mercedes-benz-290gd"
+    },
+    {
+      "id": "army_mercedes-benz-g280-cdi",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/mercedes-benz-g280-cdi-softtop/mercedes-benz-g280-cdi-softtop",
+      "answer": "Mercedes-Benz G280 CDI",
+      "aliases": [
+        "mercedes-benz g280",
+        "mercedes-benz g280 cdi"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/mercedes-benz-g280-cdi-softtop"
+    },
+    {
+      "id": "army_mercedes-benz-sprinter-315-cdi",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/mercedes-benz-sprinter-315-cdi/d141112jr1455.jpg",
+      "answer": "Mercedes-Benz Sprinter 315 CDI",
+      "aliases": [
+        "mercedes-benz sprinter",
+        "mercedes-benz sprinter 315 cdi"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/mercedes-benz-sprinter-315-cdi"
+    },
+    {
+      "id": "army_mlc-70-wegenmatsysteem",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/mlc-70-wegenmatsysteem/mlc70_2_web.jpg",
+      "answer": "MLC-70-wegenmatsysteem",
+      "aliases": [
+        "mlc-70-wegenmatsysteem"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/mlc-70-wegenmatsysteem"
+    },
+    {
+      "id": "army_mobiele-drinkwaterinstallatie",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/mobiele-drinkwaterinstallatie/mobiele-drinkwaterinstallatie.jpg",
+      "answer": "Mobiele drinkwaterinstallatie",
+      "aliases": [
+        "mobiele drinkwaterinstallatie"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/mobiele-drinkwaterinstallatie"
+    },
+    {
+      "id": "army_pantserhouwitser-2000nl",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/pantserhouwitser-2000nl-pzh2000/pantserhouwitser-2000nl",
+      "answer": "Pantserhouwitser 2000NL",
+      "aliases": [
+        "pantserhouwitser 2000nl"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/pantserhouwitser-2000nl-pzh2000"
+    },
+    {
+      "id": "army_scania-gryphus-transportvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/scania-gryphus/aa_scania-100-ho-20.jpg",
+      "answer": "Scania Gryphus-transportvoertuig",
+      "aliases": [
+        "scania gryphus-transportvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/scania-gryphus-vrachtwagen"
+    },
+    {
+      "id": "army_scania-wissellaadsysteem",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/wissel-laad-systeem-wls/d180619ge2353.jpg",
+      "answer": "Scania-wissellaadsysteem",
+      "aliases": [
+        "scania-wissellaadsysteem"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/scania-wissellaadsysteem"
+    },
+    {
+      "id": "army_skoda-yeti",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/skoda-yeti/skoda-yeti.jpg",
+      "answer": "Skoda Yeti",
+      "aliases": [
+        "skoda yeti"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/skoda-yeti"
+    },
+    {
+      "id": "army_suzuki-king-quad",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/suzuki-king-quad-750-axi-4x4/suzuki-king-quad",
+      "answer": "Suzuki King Quad",
+      "aliases": [
+        "suzuki king",
+        "suzuki king quad"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/suzuki-king-quad-750-axi-4x4"
+    },
+    {
+      "id": "army_toyota-hilux-terreinwagen",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/toyota-hi-lux/toyota-hilux",
+      "answer": "Toyota Hilux-terreinwagen",
+      "aliases": [
+        "toyota hilux-terreinwagen"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/toyota-hi-lux"
+    },
+    {
+      "id": "army_vector-terreinwagen-sof",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/vector/d140821lw0560-2-3.jpg",
+      "answer": "Vector-terreinwagen (SOF)",
+      "aliases": [
+        "vector-terreinwagen"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/vector"
+    },
+    {
+      "id": "army_waterboorinstallatie",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/waterboorinstallatie/waterboorinstallatie.jpg",
+      "answer": "Waterboorinstallatie",
+      "aliases": [
+        "waterboorinstallatie"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/waterboorinstallatie"
+    },
+    {
+      "id": "army_yamaha-motorfiets",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/yamaha-fjr1300k/d170720hh0036.jpg",
+      "answer": "Yamaha-motorfiets",
+      "aliases": [
+        "yamaha-motorfiets"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/yamaha-fjr1300k"
+    },
+    {
+      "id": "army_ypr-pantserrupsvoertuig",
+      "branch": "army",
+      "asset": "",
+      "img": "https://www.defensie.nl/binaries/medium/content/gallery/defensie/content-afbeeldingen/onderwerpen/materieel/voertuigen/ypr-pantserrupsvoertuigen/ypraav731.jpg",
+      "answer": "YPR-pantserrupsvoertuig",
+      "aliases": [
+        "ypr-pantserrupsvoertuig"
+      ],
+      "source_page": "https://www.defensie.nl/onderwerpen/materieel/voertuigen/ypr-pantserrupsvoertuigen"
+    }
+  ],
+  "credits": [
+    {
+      "note": "Images are loaded from Defensie.nl (education use). Keep attribution when publishing."
+    },
+    {
+      "note": "Landmacht list page used to generate this set: https://www.defensie.nl/onderwerpen/materieel/voertuigen"
     }
   ]
 }

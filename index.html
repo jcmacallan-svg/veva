@@ -1,32 +1,343 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>NL Defence Speaking</title></head>
-<body style="background:#0b1220;color:white;font-family:Arial">
-<h2>NL Defensie Materieelherkenning</h2>
-<div id="tabs"></div>
-<p id="q"></p>
-<img id="img" style="max-width:900px"><br>
-<select id="sel"></select><br><br>
-<button onclick="next()">Next</button>
+<html lang="nl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>NL Defensie Materieel – Speaking Trainer</title>
+  <style>
+    :root{
+      --bg1:#05070b; --bg2:#0b1220;
+      --card:#0f172a; --card2:#111c33;
+      --text:#e5e7eb; --muted:#94a3b8;
+      --accent:#60a5fa; --accent2:#38bdf8;
+      --good:#22c55e; --bad:#ef4444; --line:rgba(148,163,184,.18);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;
+      background:radial-gradient(1200px 600px at 20% 0%, #0b1b3a 0%, transparent 60%),
+                 radial-gradient(900px 500px at 90% 10%, #0a2a2a 0%, transparent 55%),
+                 linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--text);
+    }
+    .wrap{max-width:1150px;margin:0 auto;padding:18px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:20px}
+    .kicker{color:var(--accent2);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    .pill{padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px;background:rgba(15,23,42,.35)}
+    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}
+    @media (max-width: 950px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg,rgba(15,23,42,.95),rgba(17,28,51,.92));
+      border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 30px rgba(0,0,0,.35);
+    }
+    .hd{padding:14px 14px 0 14px}
+    .bd{padding:14px}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap}
+    .tabBtn{
+      padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.30);
+      background:rgba(148,163,184,.12); color:var(--text); cursor:pointer;
+      font-weight:800; font-size:13px;
+    }
+    .tabBtn:hover{border-color:rgba(56,189,248,.60); background:rgba(56,189,248,.12)}
+    .tabBtn.active{border-color:rgba(96,165,250,.70); background:rgba(96,165,250,.22)}
+    button{
+      padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.30);
+      background:rgba(148,163,184,.12); color:var(--text); cursor:pointer; font-weight:800;
+    }
+    button.primary{border-color:rgba(56,189,248,.60); background:rgba(56,189,248,.18)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .big{font-size:26px;font-weight:900}
+    .muted{color:var(--muted);font-size:13px;line-height:1.35}
+    .imgbox{width:100%;aspect-ratio:3/2;border-radius:16px;overflow:hidden;border:1px solid rgba(148,163,184,.22);background:#070b12}
+    .imgbox img{width:100%;height:100%;object-fit:cover;display:block}
+    select{width:100%;background:#070b12;color:var(--text);border:1px solid rgba(148,163,184,.30);padding:10px 12px;border-radius:12px}
+    .progress{height:10px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden}
+    .progress>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%}
+    .panel{padding:10px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.18);background:rgba(7,11,18,.55);color:var(--muted)}
+    .panel.good{border-color:rgba(34,197,94,.50); background:rgba(34,197,94,.12); color:#bbf7d0}
+    .panel.bad{border-color:rgba(239,68,68,.50); background:rgba(239,68,68,.12); color:#fecaca}
+    details{border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:10px 12px;background:rgba(7,11,18,.35)}
+    summary{cursor:pointer;font-weight:900}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    td,th{padding:10px;border-bottom:1px solid rgba(148,163,184,.14);text-align:left}
+    th{color:var(--muted);font-weight:900}
+    .tag{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="kicker">Speaking practice • A2/B1 • NL Defensie</div>
+      <h1 id="appTitle">Materieelherkenning Trainer</h1>
+      <div class="muted">Tijdens de quiz: geen juiste antwoorden, alleen streak/score. Aan het eind: overzicht.</div>
+    </div>
+    <div class="row">
+      <div class="pill">End-only feedback</div>
+      <button id="reset">Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <div class="hd"><div class="tabs" id="tabs"></div></div>
+      <div class="bd">
+        <div class="row" style="justify-content:space-between;align-items:flex-end">
+          <div>
+            <div class="tag" id="counter"></div>
+            <div class="big" id="title">Loading…</div>
+          </div>
+          <div style="min-width:240px">
+            <div class="tag">Progress: <span id="progTxt">0%</span></div>
+            <div class="progress"><div id="progBar"></div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="imgbox"><img id="img" alt="" referrerpolicy="no-referrer"></div>
+
+        <div style="margin-top:12px" class="row">
+          <div style="flex:1;min-width:260px">
+            <div class="tag"><b>Choose the name</b> (then speak 2–3 sentences)</div>
+            <select id="sel"></select>
+          </div>
+          <div class="row">
+            <button class="primary" id="submit">Submit</button>
+            <button id="next">Next</button>
+          </div>
+        </div>
+
+        <div style="margin-top:10px" class="panel" id="scorePanel">
+          Streak: <b id="streak">0</b> • Correct: <b id="correct">0</b> / <b id="total">0</b>
+          <span id="coach" style="margin-left:8px"></span>
+        </div>
+
+        <div style="margin-top:10px" class="muted">
+          <b>Speaking prompts:</b>
+          <ul id="frames"></ul>
+        </div>
+
+        <details style="margin-top:12px">
+          <summary>Finish & results overview</summary>
+          <div class="muted" style="margin-top:10px">Overzicht verschijnt alleen aan het eind.</div>
+          <div class="row" style="margin-top:10px"><button class="primary" id="finish">Show overview</button></div>
+          <div id="results" style="margin-top:12px;display:none"></div>
+        </details>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd">
+        <div class="kicker">Short theory</div>
+        <div class="big" style="font-size:22px">WHAT / HURT</div>
+      </div>
+      <div class="bd">
+        <ol id="theory" class="muted"></ol>
+        <details style="margin-top:12px">
+          <summary>Sources</summary>
+          <div class="muted" style="margin-top:10px">
+            Images are loaded from Defensie.nl topic pages (Landmacht vehicles). If you publish online, keep attribution.
+          </div>
+        </details>
+      </div>
+    </aside>
+  </div>
+</div>
+
 <script>
-let DATA, branch="army", idx=0;
-fetch("data.json").then(r=>r.json()).then(d=>{DATA=d;renderTabs();render();});
+const $ = (s)=>document.querySelector(s);
+let DATA=null;
+let state=null;
+
+function loadState(){
+  const raw = localStorage.getItem("nl_def_speaking_state_landmacht_v41");
+  if(raw) return JSON.parse(raw);
+  return { branch:"army", order:[], idx:0, streak:0, correct:0, total:0, answers:{} };
+}
+function saveState(){ localStorage.setItem("nl_def_speaking_state_landmacht_v41", JSON.stringify(state)); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function buildOrder(){
+  const qs = DATA.questions.filter(q=>q.branch===state.branch);
+  state.order = shuffle(qs.map(q=>q.id));
+  state.idx = 0;
+  saveState();
+}
+function currentQ(){ return DATA.questions.find(q=>q.id===state.order[state.idx]); }
+function setBranch(b){ state.branch=b; buildOrder(); render(); }
+
+function optionList(branch){
+  const opts = DATA.questions.filter(q=>q.branch===branch).map(q=>q.answer);
+  return opts.sort((a,b)=>a.localeCompare(b));
+}
+function coachMessage(){
+  if(state.total===0) return "";
+  const ratio = state.correct/state.total;
+  if(state.streak>=5) return "🔥 Nice streak!";
+  if(ratio>=0.75) return "✅ You’re on the right track.";
+  if(ratio>=0.5) return "👍 Keep going — focus on key features.";
+  return "💡 Slow down: focus on key shapes & roles.";
+}
+
 function renderTabs(){
- let t=document.getElementById("tabs");t.innerHTML="";
- DATA.branches.forEach(b=>{
-  let btn=document.createElement("button");
-  btn.textContent=b.label;
-  btn.onclick=()=>{branch=b.id;idx=0;render();};
-  t.appendChild(btn);
- });
+  const tabs = $("#tabs");
+  tabs.innerHTML = "";
+  DATA.branches.forEach(b=>{
+    const btn = document.createElement("button");
+    btn.className = "tabBtn" + (b.id===state.branch ? " active" : "");
+    btn.textContent = b.label;
+    btn.onclick = ()=>setBranch(b.id);
+    tabs.appendChild(btn);
+  });
 }
-function qs(){return DATA.questions.filter(x=>x.branch===branch);}
+
+function setImage(q){
+  const imgEl = $("#img");
+  const fallback = "images/fallback.jpg";
+  if(q.img){
+    imgEl.src = q.img;
+    imgEl.onerror = ()=>{ imgEl.src = fallback; imgEl.onerror=null; };
+  } else if(q.asset){
+    imgEl.src = `images/${q.asset}.jpg`;
+    imgEl.onerror = ()=>{ imgEl.src = fallback; imgEl.onerror=null; };
+  } else {
+    imgEl.src = fallback;
+  }
+}
+
 function render(){
- let q=qs()[idx];
- document.getElementById("q").textContent="Identify the platform";
- document.getElementById("img").src="images/"+q.asset+".jpg";
- let s=document.getElementById("sel");s.innerHTML="";
- qs().forEach(o=>{let op=document.createElement("option");op.text=o.answer;s.appendChild(op);});
+  renderTabs();
+
+  $("#theory").innerHTML="";
+  (DATA.microTheory||[]).forEach(t=>{
+    const li=document.createElement("li"); li.textContent=t; $("#theory").appendChild(li);
+  });
+
+  $("#frames").innerHTML="";
+  (DATA.speakingFrames||[]).forEach(fr=>{
+    const li=document.createElement("li"); li.textContent=fr.replace("___","(your words)"); $("#frames").appendChild(li);
+  });
+
+  const q = currentQ();
+  if(!q){
+    $("#title").textContent="No items in this category yet.";
+    $("#counter").textContent="";
+    setImage({});
+    $("#sel").innerHTML="";
+    $("#submit").disabled=true;
+    $("#next").disabled=true;
+    return;
+  }
+
+  const totalQs = state.order.length;
+  $("#counter").textContent = `${DATA.branches.find(x=>x.id===state.branch).label} • Question ${state.idx+1}/${totalQs}`;
+  $("#title").textContent = "Identify the platform";
+  setImage(q);
+
+  const sel=$("#sel");
+  sel.innerHTML="";
+  const ph=document.createElement("option");
+  ph.value=""; ph.textContent="Select…"; ph.disabled=true; ph.selected=true;
+  sel.appendChild(ph);
+  optionList(state.branch).forEach(o=>{
+    const op=document.createElement("option"); op.value=o; op.textContent=o; sel.appendChild(op);
+  });
+
+  const prev = state.answers[q.id];
+  if(prev && prev.choice) sel.value = prev.choice;
+
+  const prog = Math.round((state.idx/totalQs)*100);
+  $("#progTxt").textContent = `${prog}%`;
+  $("#progBar").style.width = `${prog}%`;
+
+  $("#streak").textContent = state.streak;
+  $("#correct").textContent = state.correct;
+  $("#total").textContent = state.total;
+  $("#coach").textContent = coachMessage();
+
+  $("#next").disabled = true;
+  $("#submit").disabled = false;
+  if(prev && typeof prev.isCorrect==="boolean"){
+    $("#submit").disabled = true;
+    $("#next").disabled = false;
+  }
+  $("#results").style.display="none";
 }
-function next(){idx=(idx+1)%qs().length;render();}
+
+function normalize(s){ return (s||"").trim().toLowerCase(); }
+
+function submit(){
+  const q = currentQ();
+  const choice = $("#sel").value;
+  if(!choice) return;
+  const ok = (q.aliases || []).map(normalize).includes(normalize(choice));
+
+  if(!state.answers[q.id]){
+    state.total += 1;
+    if(ok){ state.correct += 1; state.streak += 1; }
+    else { state.streak = 0; }
+  }
+  state.answers[q.id] = {choice, isCorrect: ok};
+  saveState();
+
+  const panel = $("#scorePanel");
+  panel.classList.remove("good","bad");
+  panel.classList.add(ok ? "good" : "bad");
+  $("#coach").textContent = coachMessage();
+
+  $("#submit").disabled = true;
+  $("#next").disabled = false;
+}
+
+function next(){
+  const totalQs = state.order.length;
+  if(state.idx < totalQs-1){
+    state.idx += 1;
+    saveState();
+    $("#scorePanel").classList.remove("good","bad");
+    render();
+  } else {
+    finish();
+  }
+}
+
+function finish(){
+  const rows = state.order.map((qid,i)=>{
+    const a = state.answers[qid] || {};
+    return {n:i+1, your:a.choice||"(no answer)", ok:(typeof a.isCorrect==="boolean")?(a.isCorrect?"✅":"❌"):"—"};
+  });
+
+  $("#results").innerHTML = `
+    <div class="muted"><b>Overview</b><br/>Score: <b>${state.correct}</b> / <b>${state.total}</b> • Speaking task: explain 1 ✅ and 1 ❌ in English.</div>
+    <div style="margin-top:10px;overflow:auto">
+      <table>
+        <thead><tr><th>#</th><th>Your answer</th><th>Result</th></tr></thead>
+        <tbody>${rows.map(r=>`<tr><td>${r.n}</td><td>${r.your}</td><td>${r.ok}</td></tr>`).join("")}</tbody>
+      </table>
+    </div>
+  `;
+  $("#results").style.display="block";
+}
+
+async function init(){
+  DATA = await (await fetch("data.json")).json();
+  $("#appTitle").textContent = DATA.title || "Materieelherkenning Trainer";
+
+  state = loadState();
+  if(!state.order || state.order.length===0) buildOrder();
+
+  $("#submit").onclick = submit;
+  $("#next").onclick = next;
+  $("#finish").onclick = finish;
+  $("#reset").onclick = ()=>{
+    localStorage.removeItem("nl_def_speaking_state_landmacht_v41");
+    state = loadState();
+    buildOrder();
+    $("#scorePanel").classList.remove("good","bad");
+    render();
+  };
+
+  render();
+}
+init();
 </script>
-</body></html>
+</body>
+</html>
