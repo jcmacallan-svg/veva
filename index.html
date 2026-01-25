@@ -252,7 +252,7 @@ function expectedDTG(s){
   const hhmm = s.t.replace(":","");
   const mon = MONTHS_EN[Number(s.d.slice(5,7)) - 1];
   const jj = s.d.slice(2,4);
-  return `${dd}${hhmm}${s.tz} ${mon} ${jj}`;
+  return `${dd}${hhmm}${s.tz}${mon}${jj}`;
 }
 
 /* =======================
