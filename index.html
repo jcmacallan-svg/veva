@@ -11,14 +11,24 @@
   .grid { display:grid; grid-template-columns:1.2fr 1fr; gap:20px; }
   @media (max-width: 900px){ .grid { grid-template-columns: 1fr; } }
   img { width:100%; border-radius:10px; border:1px solid #e5e7eb; }
+
   label { font-weight:bold; display:block; margin-top:10px; }
   input, textarea { width:100%; padding:10px; margin-top:6px; border-radius:10px; border:1px solid #d1d5db; }
   textarea { min-height:90px; resize:vertical; }
+
   button { margin-top:15px; padding:10px 14px; background:#2563eb; color:white; border:none; border-radius:10px; cursor:pointer; }
   button:disabled { opacity:.6; cursor:not-allowed; }
+
   .hint { font-size:13px; color:#555; margin-top:8px; line-height:1.35; }
   .ok { color:#065f46; font-weight:bold; }
   .warn { color:#92400e; font-weight:bold; }
+  .small { font-size:12px; color:#6b7280; }
+
+  /* progress */
+  .progressWrap { margin-top:12px; }
+  .progressTop { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .bar { height:12px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+  .fill { height:100%; width:0%; background:#2563eb; transition: width .25s ease; }
 </style>
 </head>
 
@@ -27,21 +37,44 @@
   <div class="card">
     <h2>Short Report Exercise</h2>
     <div class="hint">
-      Fill in the short report in English. Use short, factual phrases.
+      Fill in the short report in English. Use short, factual phrases.<br>
+      Order: <b>WHO → WHAT → WHERE → WHEN → HOW → NOTE</b><br>
+      <b>WHEN must be a DTG:</b> <code>DDHHMMZMONYY</code> (e.g., <code>251430ZJAN26</code>)
     </div>
 
-    <div class="grid">
+    <!-- Progress -->
+    <div class="progressWrap">
+      <div class="progressTop">
+        <div class="small">
+          Progress: <b><span id="progressText">0/0</span></b>
+          &nbsp;|&nbsp; Current scenario: <b><span id="scenarioLabel">—</span></b>
+        </div>
+        <button id="restartBtn" type="button" style="background:#374151;">Restart (new random order)</button>
+      </div>
+      <div class="bar" aria-label="progress bar">
+        <div class="fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:14px;">
       <div>
-        <img id="scenarioImg" src="images/img1.jpg" alt="Scenario image">
+        <img id="scenarioImg" src="" alt="Scenario image">
         <p class="hint">
-          <b>Location:</b> <span id="givenLocation">Central Station – Entrance A</span><br>
-          <b>Time:</b> <span id="givenTime">14:35</span>
+          <b>Given location:</b> <span id="givenLocation">—</span><br>
+          <b>Given date/time:</b> <span id="givenDateTime">—</span>
+        </p>
+        <p class="hint">
+          <b>Note:</b> WHERE and WHEN are not pre-filled. Students must type them in.
         </p>
       </div>
 
-      <form id="reportForm">
-        <!-- OPTIONAL: scenario id to store which picture they had -->
-        <input type="hidden" id="scenarioId" value="S1">
+      <form id="reportForm" novalidate>
+        <!-- hidden: scenario id stored in your Google Form -->
+        <input type="hidden" id="scenarioId" value="">
+        <!-- hidden: scenario date/time parts for validation -->
+        <input type="hidden" id="scenarioDTG_DD" value="">
+        <input type="hidden" id="scenarioDTG_MON" value="">
+        <input type="hidden" id="scenarioDTG_YY" value="">
 
         <label>Student name</label>
         <input id="studentName" required>
@@ -55,8 +88,8 @@
         <label>WHERE – Coordinate / Location</label>
         <input id="where" required>
 
-        <label>WHEN – Date time group</label>
-        <input id="when" required>
+        <label>WHEN – Date time group (DTG)</label>
+        <input id="when" placeholder="e.g., 251430ZJAN26" required>
 
         <label>HOW – Approach, markings, contactperson</label>
         <input id="how" required>
@@ -64,7 +97,7 @@
         <label>NOTE – Additional information</label>
         <textarea id="note" required></textarea>
 
-        <button id="submitBtn" type="submit">Submit</button>
+        <button id="submitBtn" type="submit">Submit & Next</button>
         <div class="hint" id="msg"></div>
       </form>
     </div>
@@ -72,16 +105,11 @@
 </main>
 
 <script>
-/**
- * ====== 1) VUL JE FORM ID IN ======
- * Je Form link is: https://docs.google.com/forms/d/e/FORM_ID/viewform
- */
+/* =========================
+   1) GOOGLE FORM SETTINGS
+   ========================= */
 const FORM_ID = "1FAIpQLSe3-GOHTC225b7tcRCHNH5xK9X0lNplRsGfmlQcL_1pMVhcqA";
 
-/**
- * ====== 2) KOPPEL HIER JOUW entry IDs ======
- * Gebruik "Get pre-filled link" in Google Forms om de entry.xxxxx te vinden.
- */
 const ENTRY = {
   studentName: "entry.697813513",
   who:         "entry.950739082",
@@ -90,72 +118,240 @@ const ENTRY = {
   when:        "entry.2133718989",
   how:         "entry.464832105",
   note:        "entry.2091019514",
-
-  // Aanrader: voeg in je Form óók een vraag "Scenario ID" toe (short answer, required),
-  // dan kun je die hier koppelen:
-  scenarioId:  "entry.1482083770" // <-- alleen gebruiken als je dit veld in Forms hebt
+  scenarioId:  "entry.1482083770"
 };
 
-/**
- * ====== 3) SCENARIOS (2 plaatjes per tweetal kun je later automatiseren) ======
- * Zet je plaatjes in /images/ in je GitHub repo.
- */
+/* =========================
+   2) SCENARIOS (8+)
+   - dateISO: YYYY-MM-DD
+   - timeHM:  HH:MM (24h)
+   ========================= */
 const SCENARIOS = [
-  { id:"S1", img:"images/img1.jpg", location:"Sporthal van der Knaap – Main entrance", time:"14:35" },
-  { id:"S2", img:"images/img2.jpg", location:"Bioscoop Pathe – Parking lot", time:"09:10" },
-  { id:"S3", img:"images/img3.jpg", location:"AH Stadspoort supermarket – Aisle 4", time:"18:22" },
-  { id:"S4", img:"images/img4.jpg", location:"Castle Hoekelum – Near the lake", time:"12:05" },
+  { id:"S1", img:"images/img1.jpg", location:"Sporthal Van der Knaap – Main entrance", dateISO:"2026-01-25", timeHM:"14:35" },
+  { id:"S2", img:"images/img2.jpg", location:"Bioscoop Pathé – Parking lot", dateISO:"2026-01-25", timeHM:"09:10" },
+  { id:"S3", img:"images/img3.jpg", location:"AH Stadspoort Supermarket – Aisle 4", dateISO:"2026-01-26", timeHM:"18:22" },
+  { id:"S4", img:"images/img4.jpg", location:"Kasteel Hoekelum – Near the lake", dateISO:"2026-01-26", timeHM:"12:05" },
+
+  { id:"S5", img:"images/img5.jpg", location:"Station Ede-Wageningen – Platform 2", dateISO:"2026-01-27", timeHM:"16:48" },
+  { id:"S6", img:"images/img6.jpg", location:"Ziekenhuis Gelderse Vallei – Emergency entrance", dateISO:"2026-01-27", timeHM:"11:20" },
+  { id:"S7", img:"images/img7.jpg", location:"Museum Kröller-Müller – Sculpture garden", dateISO:"2026-01-28", timeHM:"08:55" },
+  { id:"S8", img:"images/img8.jpg", location:"Zwembad De Peppel – Rear exit", dateISO:"2026-01-28", timeHM:"19:03" },
 ];
 
-// kies scenario (hier: altijd S1, maar je kunt random maken)
-const active = SCENARIOS[0];
+/* =========================
+   3) RANDOM ORDER PER USER
+   ========================= */
+const ORDER_KEY = "sr_random_order_v3";
+const INDEX_KEY = "sr_random_index_v3";
+const DONE_KEY  = "sr_done_count_v3";
 
-// inject scenario info in UI + prefill where/when
-document.getElementById("scenarioImg").src = active.img;
-document.getElementById("givenLocation").textContent = active.location;
-document.getElementById("givenTime").textContent = active.time;
-document.getElementById("scenarioId").value = active.id;
-document.getElementById("where").value = active.location;
-document.getElementById("when").value = active.time;
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-document.getElementById("reportForm").addEventListener("submit", (e) => {
+function freshStart(){
+  const newOrder = shuffle(SCENARIOS.map(s => s.id));
+  sessionStorage.setItem(ORDER_KEY, JSON.stringify(newOrder));
+  sessionStorage.setItem(INDEX_KEY, "0");
+  sessionStorage.setItem(DONE_KEY, "0");
+  return newOrder;
+}
+
+function getOrder(){
+  const saved = sessionStorage.getItem(ORDER_KEY);
+  if(saved){
+    try { return JSON.parse(saved); } catch(e){}
+  }
+  return freshStart();
+}
+
+function getIndex(){ return parseInt(sessionStorage.getItem(INDEX_KEY) || "0", 10); }
+function setIndex(i){ sessionStorage.setItem(INDEX_KEY, String(i)); }
+function getDone(){ return parseInt(sessionStorage.getItem(DONE_KEY) || "0", 10); }
+function setDone(n){ sessionStorage.setItem(DONE_KEY, String(n)); }
+
+function scenarioById(id){ return SCENARIOS.find(s => s.id === id); }
+
+/* =========================
+   4) DTG PARSE + VALIDATION
+   - Must be DDHHMMZMONYY
+   - Must match scenario DD/MON/YY
+   ========================= */
+const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+
+function monthIndexToMon(idx0){
+  return MONTHS[idx0] || null;
+}
+
+// scenario: YYYY-MM-DD -> {DD, MON, YY}
+function dtgPartsFromISO(dateISO){
+  const m = dateISO.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m) return null;
+  const yyyy = parseInt(m[1], 10);
+  const mm = parseInt(m[2], 10);
+  const dd = parseInt(m[3], 10);
+
+  const MON = monthIndexToMon(mm - 1);
+  const YY = String(yyyy % 100).padStart(2, "0");
+  const DD = String(dd).padStart(2, "0");
+  return { DD, MON, YY };
+}
+
+// returns {ok, dd, hh, mm, mon, yy, normalized, reason}
+function parseDTG(inputRaw){
+  const input = (inputRaw || "").trim().toUpperCase();
+
+  // strict: DDHHMMZMONYY
+  const m = input.match(/^(\d{2})(\d{2})(\d{2})Z([A-Z]{3})(\d{2})$/);
+  if(!m) return { ok:false, reason:"Use DTG format DDHHMMZMONYY (e.g., 251430ZJAN26)." };
+
+  const dd = parseInt(m[1], 10);
+  const hh = parseInt(m[2], 10);
+  const mi = parseInt(m[3], 10);
+  const mon = m[4];
+  const yy = m[5];
+
+  if(dd < 1 || dd > 31) return { ok:false, reason:"DTG day (DD) must be 01–31." };
+  if(hh < 0 || hh > 23) return { ok:false, reason:"DTG hour (HH) must be 00–23." };
+  if(mi < 0 || mi > 59) return { ok:false, reason:"DTG minutes (MM) must be 00–59." };
+  if(!MONTHS.includes(mon)) return { ok:false, reason:"DTG month must be JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, or DEC." };
+
+  return { ok:true, dd: String(dd).padStart(2,"0"), hh: String(hh).padStart(2,"0"), mm: String(mi).padStart(2,"0"), mon, yy, normalized: input };
+}
+
+/* =========================
+   5) RENDER + PROGRESS
+   ========================= */
+let order = getOrder();
+let idx = getIndex();
+let done = getDone();
+let current = scenarioById(order[idx]);
+
+const el = (id) => document.getElementById(id);
+
+function updateProgress(){
+  const total = order.length;
+  const completed = done;
+  el("progressText").textContent = `${Math.min(completed, total)}/${total}`;
+  const pct = total ? (Math.min(completed, total) / total) * 100 : 0;
+  el("progressFill").style.width = pct + "%";
+}
+
+function showScenario(s){
+  current = s;
+  el("scenarioImg").src = s.img;
+  el("scenarioLabel").textContent = s.id;
+  el("givenLocation").textContent = s.location;
+
+  const parts = dtgPartsFromISO(s.dateISO);
+  const pretty = `${parts.DD} ${parts.MON} 20${parts.YY} ${s.timeHM}`;
+  el("givenDateTime").textContent = pretty;
+
+  el("scenarioId").value = s.id;
+
+  // store expected date parts for DTG match
+  el("scenarioDTG_DD").value = parts.DD;
+  el("scenarioDTG_MON").value = parts.MON;
+  el("scenarioDTG_YY").value = parts.YY;
+
+  // NOT pre-filled:
+  el("where").value = "";
+  el("when").value = "";
+  el("msg").textContent = "";
+
+  updateProgress();
+}
+
+showScenario(current);
+
+/* Restart random order button */
+el("restartBtn").addEventListener("click", () => {
+  order = freshStart();
+  idx = 0; setIndex(0);
+  done = 0; setDone(0);
+  showScenario(scenarioById(order[idx]));
+});
+
+/* =========================
+   6) SUBMIT + NEXT
+   ========================= */
+el("reportForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const msg = document.getElementById("msg");
-  const btn = document.getElementById("submitBtn");
+  const msg = el("msg");
+  msg.textContent = "";
 
-  // Maak FormData met de GOOGLE FORMS entry keys
-  const data = new FormData();
-  data.append(ENTRY.studentName, document.getElementById("studentName").value.trim());
-  data.append(ENTRY.who,         document.getElementById("who").value.trim());
-  data.append(ENTRY.what,        document.getElementById("what").value.trim());
-  data.append(ENTRY.where,       document.getElementById("where").value.trim());
-  data.append(ENTRY.when,        document.getElementById("when").value.trim());
-  data.append(ENTRY.how,         document.getElementById("how").value.trim());
-  data.append(ENTRY.note,        document.getElementById("note").value.trim());
-
-  // Alleen toevoegen als je dit veld echt in je Form hebt gemaakt:
-  if (ENTRY.scenarioId && ENTRY.scenarioId.includes("entry.")) {
-    data.append(ENTRY.scenarioId, document.getElementById("scenarioId").value);
+  // required fields
+  const requiredIds = ["studentName","who","what","where","when","how","note"];
+  for(const rid of requiredIds){
+    if(!el(rid).value.trim()){
+      msg.innerHTML = `<span class="warn">Please complete all fields.</span>`;
+      return;
+    }
   }
 
-  btn.disabled = true;
-  msg.innerHTML = "Submitting…";
+  // DTG parse
+  const dtgRes = parseDTG(el("when").value);
+  if(!dtgRes.ok){
+    msg.innerHTML = `<span class="warn">WHEN invalid.</span> ${dtgRes.reason}`;
+    el("when").focus();
+    return;
+  }
 
-  // no-cors: je krijgt geen response terug, maar het wordt wel opgeslagen in Sheets
+  // enforce date match with scenario
+  const expDD = el("scenarioDTG_DD").value;
+  const expMON = el("scenarioDTG_MON").value;
+  const expYY = el("scenarioDTG_YY").value;
+
+  if(dtgRes.dd !== expDD || dtgRes.mon !== expMON || dtgRes.yy !== expYY){
+    msg.innerHTML = `<span class="warn">WHEN invalid.</span> DTG date must match the given scenario date.`;
+    el("when").focus();
+    return;
+  }
+
+  const btn = el("submitBtn");
+  btn.disabled = true;
+
+  const data = new FormData();
+  data.append(ENTRY.studentName, el("studentName").value.trim());
+  data.append(ENTRY.who,         el("who").value.trim());
+  data.append(ENTRY.what,        el("what").value.trim());
+  data.append(ENTRY.where,       el("where").value.trim());
+  data.append(ENTRY.when,        dtgRes.normalized); // normalized uppercase
+  data.append(ENTRY.how,         el("how").value.trim());
+  data.append(ENTRY.note,        el("note").value.trim());
+  data.append(ENTRY.scenarioId,  el("scenarioId").value);
+
   fetch(`https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`, {
     method: "POST",
     mode: "no-cors",
     body: data
   });
 
-  msg.innerHTML = `<span class="ok">✔ Submitted</span>`;
-  btn.disabled = false;
+  msg.innerHTML = `<span class="ok">✔ Submitted. Loading next scenario…</span>`;
 
-  // optioneel: leegmaken (maar WHERE/WHEN weer invullen)
+  // keep student name
+  const studentName = el("studentName").value;
+
+  // reset
   e.target.reset();
-  document.getElementById("where").value = active.location;
-  document.getElementById("when").value = active.time;
+  el("studentName").value = studentName;
+
+  // progress
+  done = getDone() + 1;
+  setDone(done);
+
+  // next scenario
+  idx = (idx + 1) % order.length;
+  setIndex(idx);
+  showScenario(scenarioById(order[idx]));
+
+  btn.disabled = false;
 });
 </script>
 </body>
