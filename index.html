@@ -124,11 +124,11 @@
     <div class="scenarioHeader" aria-live="polite">
       <div class="big" id="scenarioTitle">Scenario</div>
       <div class="line">
-        <span class="label">Gegeven locatie:</span>
+        <span class="label">Locatie:</span>
         <span class="value" id="givenLocation">—</span>
       </div>
       <div class="line">
-        <span class="label">Gegeven datum/tijd:</span>
+        <span class="label">Datum/tijd:</span>
         <span class="value" id="givenDateTime">—</span>
       </div>
     </div>
@@ -145,28 +145,28 @@
         </div>
 
         <form id="reportForm" novalidate>
-          <label for="studentName">Naam student(en)</label>
+          <label for="studentName">Naam student</label>
           <input id="studentName" required placeholder="Bijv. Alex & Sam" />
 
           <label for="who">WHO (Callsign)</label>
-          <input id="who" required placeholder="Bijv. Alpha 1 / Patrol 2 / Observer" />
+          <input id="who" required placeholder="Alpha, Bravo, Charlie, Delta" />
 
           <label for="what">WHAT</label>
-          <input id="what" required placeholder="Hoofdgroep, tekst, grootte, kleur" />
+          <input id="what" required placeholder="Hoofdgroep, subgroep, tekst, grootte, kleur" />
 
           <div class="row">
             <div>
               <label>WHERE (MGRS – WGS84)</label>
               <div class="mgrsRow">
                 <input class="mgrsFixed" value="31U FT" disabled aria-label="MGRS prefix" />
-                <input id="mgrsDigits" required placeholder="bijv. 8301 6636" aria-label="MGRS 8 cijfers (4+4)" />
+                <input id="mgrsDigits" required placeholder="8301 6636" aria-label="MGRS 8 cijfers (4+4)" />
               </div>
               <div class="hint" id="mgrsHint"></div>
             </div>
 
             <div>
               <label for="when">WHEN (DTG)</label>
-              <input id="when" required placeholder="Bijv. 251435A JAN 26" />
+              <input id="when" required placeholder="251435AJAN26" />
               <div class="hint" id="dtgHint"></div>
             </div>
           </div>
@@ -247,7 +247,7 @@ function formatMgrs8(d8){
 
 function formatDateNL(iso){
   const [y,m,d] = iso.split("-").map(Number);
-  return `${String(d).padStart(2,"0")} ${MONTHS_NL[m-1]} ${y}`;
+  return `${String(d).padStart(2,"0")}${MONTHS_NL[m-1]}${y}`;
 }
 
 function expectedDTG(s){
