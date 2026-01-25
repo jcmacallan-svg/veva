@@ -146,7 +146,7 @@
 
         <form id="reportForm" novalidate>
           <label for="studentName">Naam student</label>
-          <input id="studentName" required placeholder="Bijv. Alex & Sam" />
+          <input id="studentName" required placeholder="Achternaam" />
 
           <label for="who">WHO (Callsign)</label>
           <input id="who" required placeholder="Alpha, Bravo, Charlie, Delta" />
@@ -331,7 +331,11 @@ function ok(msg){
   show(el("okBox"), true);
   show(el("errorBox"), false);
 }
-
+function normalizeDTG(s){
+  return (s || "")
+    .toUpperCase()
+    .replace(/\s+/g, "");
+}
 /* Input: if we can extract 8 digits, format into "#### ####" (allows typing without spaces) */
 el("mgrsDigits").addEventListener("input", () => {
   const d8 = extractMgrs8Digits(el("mgrsDigits").value);
@@ -382,7 +386,9 @@ el("reportForm").addEventListener("submit", (e) => {
   const dist = Math.hypot(dx, dy);
   const whereCorrect = (dist <= 10);
 
-  const whenCorrect = (whenInput === expectedWhen);
+  const whenCorrect = (
+  normalizeDTG(whenInput) === normalizeDTG(expectedWhen)
+);
 
   let needsTenSeconds = false;
 
@@ -410,6 +416,7 @@ el("reportForm").addEventListener("submit", (e) => {
       error("WHEN (DTG) is onjuist. Probeer opnieuw.");
       return;
     }
+    
 
     el("dtgHint").innerHTML = `Juiste WHEN (DTG): <code>${expectedWhen}</code>`;
     show(el("dtgHint"), true);
