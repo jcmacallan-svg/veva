@@ -6,71 +6,90 @@
   <title>Short Report Trainer</title>
 
   <style>
-    body {
-      margin: 0;
-      background: #0b1220;
-      color: #e9eefc;
+    body{
+      margin:0;
+      background:#0b1220;
+      color:#e9eefc;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
-    .card { background:#111b33; border-radius:14px; padding:16px; }
+    .wrap{ max-width:980px; margin:0 auto; padding:18px; }
+    .card{ background:#111b33; border-radius:14px; padding:16px; border:1px solid rgba(255,255,255,.08); }
 
-    .topbar {
-      display:flex; gap:12px; align-items:center;
-      justify-content:space-between; margin-bottom:12px;
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      margin-bottom:12px; flex-wrap:wrap;
     }
-    .badge {
-      background:#1a2a55; padding:6px 12px;
-      border-radius:999px; font-weight:900;
+    .badge{
+      background:#1a2a55; padding:6px 12px; border-radius:999px; font-weight:900;
+      border:1px solid rgba(255,255,255,.10);
     }
-    .progress {
-      flex:1; height:10px; background:#2a355c;
+    .progress{
+      flex:1; min-width:240px; height:10px; background:rgba(255,255,255,.12);
       border-radius:999px; overflow:hidden;
     }
-    .progress div { height:100%; background:#7aa2ff; width:0%; }
+    .progress div{ height:100%; background:#7aa2ff; width:0%; }
 
-    .scenarioHeader {
-      background:rgba(122,162,255,.1);
+    .scenarioHeader{
+      background:rgba(122,162,255,.10);
+      border:1px solid rgba(122,162,255,.25);
       border-radius:12px; padding:12px; margin-bottom:12px;
     }
-    .scenarioHeader .big {
-      text-align:center; font-size:20px; font-weight:900;
+    .scenarioHeader .big{
+      text-align:center; font-size:20px; font-weight:950; letter-spacing:.2px;
     }
-    .line { text-align:center; margin-top:8px; font-size:17px; }
-    .label { font-weight:500; }
-    .value { font-weight:900; }
+    .line{ text-align:center; margin-top:8px; font-size:17px; }
+    .label{ font-weight:500; opacity:.95; }     /* niet vet */
+    .value{ font-weight:900; }                   /* wel vet */
 
-    .grid { display:grid; grid-template-columns:1.1fr .9fr; gap:14px; }
-    @media (max-width:860px){ .grid{grid-template-columns:1fr;} }
+    .grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:14px; }
+    @media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
 
-    img { width:100%; border-radius:12px; }
-
-    label { display:block; margin-top:10px; font-weight:800; }
-    input, textarea {
-      width:100%; padding:10px; border-radius:10px;
-      background:#0b1220; color:#e9eefc;
-      border:1px solid #334;
+    img{
+      width:100%; height:auto; border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#0b1220;
     }
 
-    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    @media (max-width:540px){ .row{grid-template-columns:1fr;} }
-
-    button {
-      margin-top:14px; padding:10px;
-      border-radius:12px; font-weight:900;
-      background:#7aa2ff; border:0; cursor:pointer;
+    label{ display:block; margin-top:10px; font-weight:800; }
+    input, textarea{
+      width:100%; box-sizing:border-box;
+      padding:10px 12px;
+      border-radius:10px;
+      background:#0b1220;
+      color:#e9eefc;
+      border:1px solid rgba(255,255,255,.14);
+      outline:none;
     }
+    textarea{ min-height:84px; resize:vertical; }
 
-    .hint, .error, .ok {
-      margin-top:10px; padding:10px;
-      border-radius:10px; display:none;
+    .row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:540px){ .row{ grid-template-columns:1fr; } }
+
+    button{
+      margin-top:14px;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:950;
+      background:#7aa2ff;
+      color:#071022;
+      border:0;
+      cursor:pointer;
     }
-    .hint { background:rgba(255,205,117,.15); }
-    .error { background:rgba(255,90,90,.2); }
-    .ok { background:rgba(100,255,160,.2); }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
 
-    .footer { font-size:12px; opacity:.75; margin-top:8px; }
-    code { background:#1a2a55; padding:2px 6px; border-radius:6px; }
+    .hint, .error, .ok{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:10px;
+      display:none;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .hint{ background:rgba(255,205,117,.12); border-color: rgba(255,205,117,.25); }
+    .error{ background:rgba(255,90,90,.18); border-color: rgba(255,90,90,.25); }
+    .ok{ background:rgba(100,255,160,.14); border-color: rgba(100,255,160,.25); }
+
+    .footer{ font-size:12px; opacity:.8; margin-top:8px; }
+    code{ background:rgba(255,255,255,.10); padding:2px 6px; border-radius:8px; }
   </style>
 </head>
 
@@ -79,144 +98,391 @@
 
   <div class="topbar">
     <div class="badge" id="scenarioBadge">Scenario 1 van 8</div>
-    <div class="progress"><div id="progressBar"></div></div>
+    <div class="progress" aria-label="voortgang"><div id="progressBar"></div></div>
     <div class="badge" id="progressText">1 / 8</div>
   </div>
 
   <div class="card">
-    <div class="scenarioHeader">
+    <div class="scenarioHeader" aria-live="polite">
       <div class="big" id="scenarioTitle">Scenario</div>
       <div class="line">
         <span class="label">Gegeven locatie:</span>
-        <span class="value" id="givenLocation"></span>
+        <span class="value" id="givenLocation">—</span>
       </div>
       <div class="line">
         <span class="label">Gegeven datum/tijd:</span>
-        <span class="value" id="givenDateTime"></span>
+        <span class="value" id="givenDateTime">—</span>
       </div>
     </div>
 
     <div class="grid">
-      <img id="scenarioImg" src="" alt="Scenario">
+      <div>
+        <img id="scenarioImg" src="" alt="Scenario afbeelding">
+      </div>
 
-      <form id="form">
-        <label>Naam student(en)</label>
-        <input id="student">
-
-        <label>WHO (Callsign)</label>
-        <input id="who">
-
-        <label>WHAT</label>
-        <input id="what" placeholder="Hoofdgroep, tekst, grootte, kleur">
-
-        <div class="row">
-          <div>
-            <label>WHERE (MGRS)</label>
-            <input id="where">
-            <div class="hint" id="mgrsHint"></div>
-          </div>
-          <div>
-            <label>WHEN (DTG)</label>
-            <input id="when">
-            <div class="hint" id="dtgHint">
-              Formaat: <code>DDHHMM(A|B) MON JJ</code><br>
-              Voorbeeld: <code>251435A JAN 26</code>
-            </div>
-          </div>
+      <div>
+        <div class="footer">
+          WHEN moet een datumtijdgroep zijn: <code>DDHHMM(A|B) MON JJ</code>
+          (A = wintertijd, B = zomertijd). Voorbeeld: <code>251435AJAN26</code>
         </div>
 
-        <label>HOW</label>
-        <input id="how" placeholder="Naderingsroute, markering, contactpersoon">
+        <form id="form" novalidate>
+          <label for="student">Naam student(en)</label>
+          <input id="student" required placeholder="Bijv. Alex & Sam">
 
-        <label>NOTE (optioneel)</label>
-        <textarea id="note"></textarea>
+          <label for="who">WHO (Callsign)</label>
+          <input id="who" required placeholder="Bijv. Alpha 1 / Patrol 2 / Observer">
 
-        <button type="submit">Versturen & volgende</button>
+          <label for="what">WHAT</label>
+          <input id="what" required placeholder="Hoofdgroep / subgroep, tekst, grootte, kleur">
 
-        <div class="error" id="error"></div>
-        <div class="ok" id="ok"></div>
-      </form>
+          <div class="row">
+            <div>
+              <label for="where">WHERE (MGRS)</label>
+              <input id="where" required placeholder="MGRS (WGS84), bijv. 31U FT 8301 6636">
+              <div class="hint" id="mgrsHint"></div>
+            </div>
+
+            <div>
+              <label for="when">WHEN (DTG)</label>
+              <input id="when" required placeholder="DTG, bijv. 251435A JAN 26">
+              <div class="hint" id="dtgHint">
+                Formaat: <code>DDHHMM(A|B) MON JJ</code><br>
+                Voorbeeld: <code>251435A JAN 26</code>
+              </div>
+            </div>
+          </div>
+
+          <label for="how">HOW</label>
+          <input id="how" required placeholder="Naderingsroute, markering, contactpersoon">
+
+          <label for="note">NOTE (optioneel)</label>
+          <textarea id="note" placeholder="Optioneel"></textarea>
+
+          <button id="submitBtn" type="submit">Versturen & volgende</button>
+
+          <div class="error" id="errorBox"></div>
+          <div class="ok" id="okBox"></div>
+
+          <div class="footer">
+            Je werkt in willekeurige volgorde.
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-/* CONFIG */
+/* =======================
+   Google Forms endpoint
+   ======================= */
 const FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSe3-GOHTC225b7tcRCHNH5xK9X0lNplRsGfmlQcL_1pMVhcqA/formResponse";
 
+const ENTRY = {
+  studentName: "entry.697813513",
+  who:         "entry.950739082",
+  what:        "entry.724583571",
+  where:       "entry.1339994849",
+  when:        "entry.2133718989",
+  how:         "entry.464832105",
+  note:        "entry.2091019514",
+  scenarioId:  "entry.1482083770"
+};
+
+/* =======================
+   Scenario data (8)
+   - d: YYYY-MM-DD
+   - t: HH:MM
+   - tz: A/B (niet getoond in scenario, wel gevalideerd)
+   - mgrs: 8-digit MGRS (10m)
+   ======================= */
+const SCENARIOS = [
+  { id:"S1", img:"images/img1.jpg", loc:"Topsporthal Van der Knaap – hoofdingang",          d:"2026-01-25", t:"14:35", tz:"A", mgrs:"31U FT 8301 6636" },
+  { id:"S2", img:"images/img2.jpg", loc:"Pathé Ede – parkeerplaats",                        d:"2026-06-12", t:"09:10", tz:"B", mgrs:"31U FT 8174 6614" },
+  { id:"S3", img:"images/img3.jpg", loc:"Stadspoort – parkeerplaats",                        d:"2026-03-03", t:"18:22", tz:"A", mgrs:"31U FT 8197 6629" },
+  { id:"S4", img:"images/img4.jpg", loc:"Kasteel Hoekelum – zuidkant meer",                  d:"2026-05-09", t:"12:05", tz:"B", mgrs:"31U FT 8372 6611" },
+  { id:"S5", img:"images/img5.jpg", loc:"Ziekenhuis Gelderse Vallei – hoofdingang",          d:"2026-02-14", t:"07:50", tz:"A", mgrs:"31U FT 8156 6680" },
+  { id:"S6", img:"images/img6.jpg", loc:"Zwembad De Peppel – ingang",                        d:"2026-07-21", t:"16:40", tz:"B", mgrs:"31U FT 8132 6842" },
+  { id:"S7", img:"images/img7.jpg", loc:"Oude Kerk – Grotestraat",                           d:"2026-11-08", t:"10:15", tz:"A", mgrs:"31U FT 8317 6953" },
+  { id:"S8", img:"images/img8.jpg", loc:"Station Ede-Wageningen – nieuwe locatie",           d:"2026-08-30", t:"20:05", tz:"B", mgrs:"31U FT 8353 6744" }
+];
+
+/* =======================
+   Helpers
+   ======================= */
 const MONTHS_NL = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
 const MONTHS_EN = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 
-/* SCENARIOS (met jouw definitieve MGRS) */
-const SCENARIOS = [
-  {id:"S1",img:"images/img1.jpg",loc:"Topsporthal Van der Knaap – hoofdingang",d:"2026-01-25",t:"14:35",tz:"A",mgrs:"31U FT 8301 6636"},
-  {id:"S2",img:"images/img2.jpg",loc:"Pathé Ede – parkeerplaats",d:"2026-06-12",t:"09:10",tz:"B",mgrs:"31U FT 8174 6614"},
-  {id:"S3",img:"images/img3.jpg",loc:"Stadspoort – parkeerplaats",d:"2026-03-03",t:"18:22",tz:"A",mgrs:"31U FT 8197 6629"},
-  {id:"S4",img:"images/img4.jpg",loc:"Kasteel Hoekelum – zuidkant meer",d:"2026-05-09",t:"12:05",tz:"B",mgrs:"31U FT 8372 6611"},
-  {id:"S5",img:"images/img5.jpg",loc:"Ziekenhuis Gelderse Vallei – hoofdingang",d:"2026-02-14",t:"07:50",tz:"A",mgrs:"31U FT 8156 6680"},
-  {id:"S6",img:"images/img6.jpg",loc:"Zwembad De Peppel – ingang",d:"2026-07-21",t:"16:40",tz:"B",mgrs:"31U FT 8132 6842"},
-  {id:"S7",img:"images/img7.jpg",loc:"Oude Kerk – Grotestraat",d:"2026-11-08",t:"10:15",tz:"A",mgrs:"31U FT 8317 6953"},
-  {id:"S8",img:"images/img8.jpg",loc:"Station Ede-Wageningen – nieuwe locatie",d:"2026-08-30",t:"20:05",tz:"B",mgrs:"31U FT 8353 6744"}
-];
+function byId(id){ return document.getElementById(id); }
+function show(el, yes){ el.style.display = yes ? "block" : "none"; }
+function cleanSpaces(s){ return (s || "").toUpperCase().trim().replace(/\s+/g," "); }
+function compact(s){ return cleanSpaces(s).replace(/\s+/g,""); }
 
-/* LOGICA */
-let i=0, failDTG={}, failMGRS={};
-
-function formatDateNL(d){
-  const [y,m,da]=d.split("-");
-  return `${da} ${MONTHS_NL[+m-1]} ${y}`;
+function formatDateNL(iso){
+  const [y,m,d] = iso.split("-").map(Number);
+  return `${String(d).padStart(2,"0")} ${MONTHS_NL[m-1]} ${y}`;
 }
 
-function render(){
-  const s=SCENARIOS[i];
-  document.getElementById("scenarioTitle").textContent=`Scenario ${s.id}`;
-  document.getElementById("givenLocation").textContent=s.loc;
-  document.getElementById("givenDateTime").textContent=`${formatDateNL(s.d)} ${s.t}`;
-  document.getElementById("scenarioImg").src=s.img;
-
-  document.getElementById("scenarioBadge").textContent=`Scenario ${i+1} van ${SCENARIOS.length}`;
-  document.getElementById("progressText").textContent=`${i+1} / ${SCENARIOS.length}`;
-  document.getElementById("progressBar").style.width=`${(i+1)/SCENARIOS.length*100}%`;
-
-  document.getElementById("error").style.display="none";
-  document.getElementById("ok").style.display="none";
-  document.getElementById("mgrsHint").style.display=(failMGRS[s.id]>=2)?"block":"none";
-  document.getElementById("dtgHint").style.display=(failDTG[s.id]>=2)?"block":"none";
+function expectedDTG(scn){
+  // DD HHMM (A|B) MON JJ
+  const dd = scn.d.slice(8,10);
+  const hhmm = scn.t.replace(":","");
+  const mon = MONTHS_EN[Number(scn.d.slice(5,7)) - 1];
+  const jj = scn.d.slice(2,4);
+  return `${dd}${hhmm}${scn.tz} ${mon} ${jj}`;
 }
-render();
 
-/* SUBMIT */
-document.getElementById("form").onsubmit=e=>{
+/* =======================
+   Random order per session
+   ======================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function loadOrder(){
+  const key = "sr_order_v1";
+  const raw = sessionStorage.getItem(key);
+  if(raw){
+    try{
+      const ids = JSON.parse(raw);
+      const map = new Map(SCENARIOS.map(s => [s.id,s]));
+      const ordered = ids.map(id => map.get(id)).filter(Boolean);
+      if(ordered.length === SCENARIOS.length) return ordered;
+    }catch(e){}
+  }
+  const ordered = shuffle(SCENARIOS);
+  sessionStorage.setItem(key, JSON.stringify(ordered.map(s=>s.id)));
+  return ordered;
+}
+
+const ORDER = loadOrder();
+
+/* =======================
+   State: attempts per scenario
+   - after 2 failed attempts: show correct answer and allow submission
+   ======================= */
+let idx = 0;
+const failDTG  = {};  // {scenarioId: count}
+const failMGRS = {};  // {scenarioId: count}
+
+/* =======================
+   UI render
+   ======================= */
+function setProgress(){
+  byId("scenarioBadge").textContent = `Scenario ${idx+1} van ${ORDER.length}`;
+  byId("progressText").textContent  = `${idx+1} / ${ORDER.length}`;
+  byId("progressBar").style.width   = `${((idx+1)/ORDER.length)*100}%`;
+}
+
+function renderScenario(){
+  const s = ORDER[idx];
+
+  byId("scenarioTitle").textContent = `Scenario ${s.id}`;
+  byId("givenLocation").textContent = s.loc;
+  byId("givenDateTime").textContent = `${formatDateNL(s.d)} ${s.t}`;
+  byId("scenarioImg").src = s.img;
+
+  // reset fields except student name
+  ["who","what","where","when","how","note"].forEach(id => byId(id).value = "");
+
+  // messages
+  show(byId("errorBox"), false);
+  show(byId("okBox"), false);
+
+  // hints visible only after 2 fails for that field
+  const mFails = failMGRS[s.id] || 0;
+  const dFails = failDTG[s.id]  || 0;
+
+  if(mFails >= 2){
+    byId("mgrsHint").textContent = `Juiste MGRS: ${s.mgrs}`;
+    show(byId("mgrsHint"), true);
+  }else{
+    show(byId("mgrsHint"), false);
+  }
+
+  if(dFails >= 2){
+    byId("dtgHint").innerHTML = `Juiste DTG: <code>${expectedDTG(s)}</code>`;
+    show(byId("dtgHint"), true);
+  }else{
+    // standaardhint (format + voorbeeld) blijft, maar pas na 2 fouten tonen we "Juiste DTG"
+    byId("dtgHint").innerHTML = `Formaat: <code>DDHHMM(A|B) MON JJ</code><br>Voorbeeld: <code>251435A JAN 26</code>`;
+    show(byId("dtgHint"), false);
+  }
+
+  setProgress();
+}
+
+renderScenario();
+
+/* =======================
+   Validation logic
+   ======================= */
+function error(msg){
+  byId("errorBox").textContent = msg;
+  show(byId("errorBox"), true);
+  show(byId("okBox"), false);
+}
+
+function ok(msg){
+  byId("okBox").textContent = msg;
+  show(byId("okBox"), true);
+  show(byId("errorBox"), false);
+}
+
+/**
+ * WHERE rule:
+ * - required (not empty)
+ * - must exactly match the scenario MGRS when compacted, OR (after 2 fails) allow submission but show correct answer.
+ *
+ * NOTE: You previously had a 10m tolerance check. Because you now want students to hand in their last (even wrong)
+ * answer after 2 fails, we keep the strict check for the first 2 attempts and then allow submission.
+ */
+function validateWhere(whereInput, scn){
+  const w = compact(whereInput);
+  if(!w) return { ok:false, hardStop:true, msg:"WHERE (MGRS) is verplicht." };
+
+  const expected = compact(scn.mgrs);
+  const isCorrect = (w === expected);
+
+  if(isCorrect) return { ok:true, hardStop:false };
+
+  // incorrect:
+  failMGRS[scn.id] = (failMGRS[scn.id] || 0) + 1;
+
+  if(failMGRS[scn.id] < 2){
+    return { ok:false, hardStop:true, msg:"WHERE is onjuist. Probeer opnieuw." };
+  }
+
+  // after 2 fails: show correct answer and allow submission with their last (wrong) input
+  byId("mgrsHint").textContent = `Juiste MGRS: ${scn.mgrs}`;
+  show(byId("mgrsHint"), true);
+
+  return { ok:false, hardStop:false, msg:"WHERE is onjuist. Je mag door (juiste MGRS wordt getoond)." };
+}
+
+/**
+ * WHEN rule:
+ * - required (not empty)
+ * - must match expected DTG exactly for first 2 attempts
+ * - after 2 fails: show correct DTG and allow submission with their last (wrong) input
+ */
+function validateWhen(whenInput, scn){
+  const w = cleanSpaces(whenInput);
+  if(!w) return { ok:false, hardStop:true, msg:"WHEN (DTG) is verplicht." };
+
+  const exp = expectedDTG(scn);
+  if(w === exp) return { ok:true, hardStop:false };
+
+  failDTG[scn.id] = (failDTG[scn.id] || 0) + 1;
+
+  if(failDTG[scn.id] < 2){
+    return { ok:false, hardStop:true, msg:"WHEN (DTG) is onjuist. Probeer opnieuw." };
+  }
+
+  byId("dtgHint").innerHTML = `Juiste DTG: <code>${exp}</code>`;
+  show(byId("dtgHint"), true);
+
+  return { ok:false, hardStop:false, msg:"WHEN is onjuist. Je mag door (juiste DTG wordt getoond)." };
+}
+
+/* =======================
+   Submit
+   ======================= */
+byId("form").addEventListener("submit", (e) => {
   e.preventDefault();
-  const s=SCENARIOS[i];
+  const scn = ORDER[idx];
 
-  let ok=true;
-  const when=document.getElementById("when").value.toUpperCase();
-  const expectedDTG=`${s.d.slice(8,10)}${s.t.replace(":","")}${s.tz} ${MONTHS_EN[+s.d.slice(5,7)-1]} ${s.d.slice(2,4)}`;
+  const studentName = byId("student").value.trim();
+  const who  = byId("who").value.trim();
+  const what = byId("what").value.trim();
+  const where = byId("where").value.trim();
+  const when  = byId("when").value.trim();
+  const how  = byId("how").value.trim();
+  const note = byId("note").value.trim(); // optional
 
-  if(when!==expectedDTG){
-    failDTG[s.id]=(failDTG[s.id]||0)+1;
-    if(failDTG[s.id]<2){ ok=false; }
+  if(!studentName || !who || !what || !how){
+    error("Vul alle verplichte velden in (NOTE is optioneel).");
+    return;
   }
-
-  if(!document.getElementById("where").value.includes(s.mgrs.slice(0,7))){
-    failMGRS[s.id]=(failMGRS[s.id]||0)+1;
-    if(failMGRS[s.id]<2){ ok=false; }
+  if(!where){
+    error("WHERE (MGRS) is verplicht.");
+    return;
   }
-
-  if(!ok){
-    document.getElementById("error").textContent="Controleer WHERE en/of WHEN.";
-    document.getElementById("error").style.display="block";
-    render();
+  if(!when){
+    error("WHEN (DTG) is verplicht.");
     return;
   }
 
-  document.getElementById("ok").textContent="Ingediend. Volgende scenario.";
-  document.getElementById("ok").style.display="block";
+  const whereCheck = validateWhere(where, scn);
+  if(whereCheck.hardStop){
+    error(whereCheck.msg);
+    // ensure hints update if needed
+    renderScenario(); // keeps current scenario but refreshes hint visibility
+    return;
+  }
 
-  i++;
-  if(i<SCENARIOS.length){ setTimeout(render,600); }
-};
+  const whenCheck = validateWhen(when, scn);
+  if(whenCheck.hardStop){
+    error(whenCheck.msg);
+    renderScenario();
+    return;
+  }
+
+  // If either is wrong but allowed, we still show a message (not blocking)
+  if(!whereCheck.ok || !whenCheck.ok){
+    // show gentle info but proceed
+    ok("Je mag door. Let op: het juiste antwoord wordt (nu) getoond.");
+  } else {
+    ok("Ingediend. Volgende scenario…");
+  }
+
+  // build payload (submit EXACTLY what student typed; note optional)
+  const data = new URLSearchParams();
+  data.append(ENTRY.studentName, studentName);
+  data.append(ENTRY.who, who);
+  data.append(ENTRY.what, what);
+  data.append(ENTRY.where, where);
+  data.append(ENTRY.when, when);
+  data.append(ENTRY.how, how);
+  if(note) data.append(ENTRY.note, note);
+  data.append(ENTRY.scenarioId, scn.id);
+
+  byId("submitBtn").disabled = true;
+
+  fetch(FORM_ACTION, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data.toString()
+  });
+
+  // next scenario after a short delay so message is visible
+  setTimeout(() => {
+    idx++;
+    if(idx >= ORDER.length){
+      // finished
+      byId("scenarioTitle").textContent = "Klaar!";
+      byId("givenLocation").textContent = "Alle scenario’s zijn afgerond.";
+      byId("givenDateTime").textContent = "Je kunt dit tabblad sluiten.";
+      show(byId("errorBox"), false);
+      ok("Dankjewel!");
+      byId("form").style.display = "none";
+      byId("scenarioImg").style.display = "none";
+      byId("scenarioBadge").textContent = `Scenario ${ORDER.length} van ${ORDER.length}`;
+      byId("progressText").textContent = `${ORDER.length} / ${ORDER.length}`;
+      byId("progressBar").style.width = "100%";
+      return;
+    }
+    byId("submitBtn").disabled = false;
+    renderScenario();
+  }, 600);
+});
 </script>
 </body>
 </html>
