@@ -163,13 +163,18 @@
           <div class="row">
             <div>
               <label>WHERE (MGRS – WGS84)</label>
-              <div class="mgrsRow">
-                <input class="mgrsFixed" value="31U FT" disabled aria-label="MGRS prefix" />
-                <div class="mgrsDigitsWrap">
-                  <input id="mgrsE" inputmode="numeric" maxlength="4" required placeholder="Easting (4 cijfers)" aria-label="MGRS easting 4 digits" />
-                  <input id="mgrsN" inputmode="numeric" maxlength="4" required placeholder="Northing (4 cijfers)" aria-label="MGRS northing 4 digits" />
-                </div>
-              </div>
+           <label>WHERE (MGRS – WGS84)</label>
+<div class="mgrsRow">
+  <input class="mgrsFixed" value="31U FT" disabled />
+  <input
+    id="mgrsDigits"
+    required
+    placeholder="bijv. 8301 6636"
+    aria-label="MGRS 8 cijfers (4+4)"
+  />
+</div>
+<div class="hint" id="mgrsHint"></div>
+
               <div class="hint" id="mgrsHint"></div>
             </div>
 
