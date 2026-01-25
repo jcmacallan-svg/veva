@@ -39,7 +39,9 @@
     <div class="hint">
       Fill in the short report in English. Use short, factual phrases.<br>
       Order: <b>WHO → WHAT → WHERE → WHEN → HOW → NOTE</b><br>
-      <b>WHEN must be a DTG:</b> <code>DDHHMMAMONYY</code> (e.g., <code>251430AJAN26</code>)
+      <b>WHEN must be a DTG:</b> <code>DDHHMM(A|B)MONYY</code><br>
+A = winter time (Alpha), B = summer time (Bravo)
+ (e.g., <code>251430AJAN26</code>)
     </div>
 
     <!-- Progress -->
@@ -206,23 +208,41 @@ function dtgPartsFromISO(dateISO){
 function parseDTG(inputRaw){
   const input = (inputRaw || "").trim().toUpperCase();
 
-  // strict: DDHHMMZMONYY
-  const m = input.match(/^(\d{2})(\d{2})(\d{2})Z([A-Z]{3})(\d{2})$/);
-  if(!m) return { ok:false, reason:"Use DTG format DDHHMMZMONYY (e.g., 251430ZJAN26)." };
+  // Strict: DDHHMM(A|B)MONYY
+  const m = input.match(/^(\d{2})(\d{2})(\d{2})([AB])([A-Z]{3})(\d{2})$/);
+  if(!m){
+    return {
+      ok:false,
+      reason:"Use DTG format DDHHMM(A|B)MONYY. A = winter time, B = summer time."
+    };
+  }
 
   const dd = parseInt(m[1], 10);
   const hh = parseInt(m[2], 10);
   const mi = parseInt(m[3], 10);
-  const mon = m[4];
-  const yy = m[5];
+  const tz = m[4]; // A or B
+  const mon = m[5];
+  const yy = m[6];
 
   if(dd < 1 || dd > 31) return { ok:false, reason:"DTG day (DD) must be 01–31." };
   if(hh < 0 || hh > 23) return { ok:false, reason:"DTG hour (HH) must be 00–23." };
   if(mi < 0 || mi > 59) return { ok:false, reason:"DTG minutes (MM) must be 00–59." };
-  if(!MONTHS.includes(mon)) return { ok:false, reason:"DTG month must be JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, or DEC." };
+  if(!MONTHS.includes(mon)){
+    return { ok:false, reason:"DTG month must be JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, or DEC." };
+  }
 
-  return { ok:true, dd: String(dd).padStart(2,"0"), hh: String(hh).padStart(2,"0"), mm: String(mi).padStart(2,"0"), mon, yy, normalized: input };
+  return {
+    ok:true,
+    dd: String(dd).padStart(2,"0"),
+    hh: String(hh).padStart(2,"0"),
+    mm: String(mi).padStart(2,"0"),
+    tz,   // A or B
+    mon,
+    yy,
+    normalized: input
+  };
 }
+
 
 /* =========================
    5) RENDER + PROGRESS
