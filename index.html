@@ -124,11 +124,11 @@
     <div class="scenarioHeader" aria-live="polite">
       <div class="big" id="scenarioTitle">Scenario</div>
       <div class="line">
-        <span class="label">Locatie:</span>
+        <span class="label">Gegeven locatie:</span>
         <span class="value" id="givenLocation">—</span>
       </div>
       <div class="line">
-        <span class="label">Datum/tijd:</span>
+        <span class="label">Gegeven datum/tijd:</span>
         <span class="value" id="givenDateTime">—</span>
       </div>
     </div>
@@ -140,19 +140,19 @@
 
       <div>
         <div class="footerNote">
-          <b>WHEN (DTG)</b> formaat: <code>DDHHMM(A|B) MON JJ</code> — voorbeeld: <code>251435AJAN26</code><br>
-          <b>WHERE (MGRS – WGS84)</b>: prefix staat vast, jij vult alleen de 8 cijfers in (4+4).
+          <b>WHEN (DTG)</b> formaat: <code>DDHHMM(A|B) MON JJ</code> — voorbeeld: <code>251435A JAN 26</code><br>
+          <b>WHERE (MGRS – WGS84)</b>: prefix staat vast, jij vult alleen de 8 cijfers in (4+4). Je mag <code>83016636</code> of <code>8301 6636</code> typen.
         </div>
 
         <form id="reportForm" novalidate>
-          <label for="studentName">Naam student</label>
-          <input id="studentName" required placeholder="Bijv. Achternaam" />
+          <label for="studentName">Naam student(en)</label>
+          <input id="studentName" required placeholder="Bijv. Alex & Sam" />
 
           <label for="who">WHO (Callsign)</label>
-          <input id="who" required placeholder="Bijv. Alpha / Bravo / Charlie / Delta" />
+          <input id="who" required placeholder="Bijv. Alpha 1 / Patrol 2 / Observer" />
 
           <label for="what">WHAT</label>
-          <input id="what" required placeholder="Hoofdgroep, subgroep, tekst, grootte, kleur" />
+          <input id="what" required placeholder="Hoofdgroep, tekst, grootte, kleur" />
 
           <div class="row">
             <div>
@@ -234,12 +234,15 @@ function el(id){ return document.getElementById(id); }
 function show(node, yes){ node.style.display = yes ? "block" : "none"; }
 
 function normSpaces(s){ return (s || "").toUpperCase().trim().replace(/\s+/g," "); }
-function onlyMgrsDigits(val){
-  return (val || "")
-    .replace(/[^0-9 ]/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 9); // "8301 6636"
+
+/* Extract exactly the last 8 digits typed (accepts "83016636", "8301 6636", or "31UFT83016636") */
+function extractMgrs8Digits(raw){
+  const digits = String(raw || "").replace(/\D/g, "");
+  if(digits.length < 8) return null;
+  return digits.slice(-8);
+}
+function formatMgrs8(d8){
+  return `${d8.slice(0,4)} ${d8.slice(4,8)}`;
 }
 
 function formatDateNL(iso){
@@ -252,7 +255,7 @@ function expectedDTG(s){
   const hhmm = s.t.replace(":","");
   const mon = MONTHS_EN[Number(s.d.slice(5,7)) - 1];
   const jj = s.d.slice(2,4);
-  return `${dd}${hhmm}${s.tz}${mon}${jj}`;
+  return `${dd}${hhmm}${s.tz} ${mon} ${jj}`;
 }
 
 /* =======================
@@ -268,7 +271,7 @@ function shuffle(arr){
 }
 
 function loadOrder(){
-  const key = "short_report_order_v3";
+  const key = "short_report_order_v4";
   const raw = sessionStorage.getItem(key);
   if(raw){
     try{
@@ -285,16 +288,12 @@ function loadOrder(){
 
 const ORDER = loadOrder();
 
-/* =======================
-   Attempts per scenario
-   ======================= */
+/* Attempts per scenario */
 let idx = 0;
-const failWhere = {}; // {scenarioId: count}
-const failWhen  = {}; // {scenarioId: count}
+const failWhere = {};
+const failWhen  = {};
 
-/* =======================
-   UI
-   ======================= */
+/* UI */
 function setProgress(){
   el("scenarioBadge").textContent = `Scenario ${idx+1} van ${ORDER.length}`;
   el("progressText").textContent  = `${idx+1} / ${ORDER.length}`;
@@ -333,14 +332,13 @@ function ok(msg){
   show(el("errorBox"), false);
 }
 
-/* Input sanitation */
+/* Input: if we can extract 8 digits, format into "#### ####" (allows typing without spaces) */
 el("mgrsDigits").addEventListener("input", () => {
-  el("mgrsDigits").value = onlyMgrsDigits(el("mgrsDigits").value);
+  const d8 = extractMgrs8Digits(el("mgrsDigits").value);
+  if(d8) el("mgrsDigits").value = formatMgrs8(d8);
 });
 
-/* =======================
-   Submit
-   ======================= */
+/* Submit */
 el("reportForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -352,8 +350,7 @@ el("reportForm").addEventListener("submit", (e) => {
   const how  = el("how").value.trim();
   const note = el("note").value.trim();
 
-  const mgrsInput = onlyMgrsDigits(el("mgrsDigits").value); // "8301 6636"
-  const userDigits = mgrsInput.replace(/\s+/g,"");         // "83016636"
+  const user8 = extractMgrs8Digits(el("mgrsDigits").value);
   const whenInput = normSpaces(el("when").value);
 
   // required
@@ -361,7 +358,7 @@ el("reportForm").addEventListener("submit", (e) => {
     error("Vul alle verplichte velden in (NOTE is optioneel).");
     return;
   }
-  if(userDigits.length !== 8){
+  if(!user8){
     error("WHERE is verplicht: vul 8 cijfers in (4 + 4), bijv. 8301 6636.");
     return;
   }
@@ -370,11 +367,22 @@ el("reportForm").addEventListener("submit", (e) => {
     return;
   }
 
-  const expectedWhereDigits = s.mgrsDigits.replace(/\s+/g,"");
+  // expected
+  const expected8 = s.mgrsDigits.replace(/\s+/g,""); // "83016636"
   const expectedWhen = expectedDTG(s);
 
-  const whereCorrect = (userDigits === expectedWhereDigits);
-  const whenCorrect  = (whenInput === expectedWhen);
+  // 10m tolerant: difference of at most 1 grid step (10m) overall distance
+  const ue = parseInt(user8.slice(0,4), 10);
+  const un = parseInt(user8.slice(4,8), 10);
+  const ee = parseInt(expected8.slice(0,4), 10);
+  const en = parseInt(expected8.slice(4,8), 10);
+
+  const dx = (ue - ee) * 10;
+  const dy = (un - en) * 10;
+  const dist = Math.hypot(dx, dy);
+  const whereCorrect = (dist <= 10);
+
+  const whenCorrect = (whenInput === expectedWhen);
 
   let needsTenSeconds = false;
 
@@ -408,10 +416,10 @@ el("reportForm").addEventListener("submit", (e) => {
     needsTenSeconds = true;
   }
 
-  // Build WHERE full value for Forms
-  const whereFull = `31U FT ${mgrsInput}`;
+  // WHERE for Forms (always full + formatted)
+  const whereFull = `31U FT ${formatMgrs8(user8)}`;
 
-  // Submit exactly what the student entered (even if wrong after 2 attempts)
+  // Submit exact student answers (even if wrong after 2 attempts)
   const data = new URLSearchParams();
   data.append(ENTRY.studentName, studentName);
   data.append(ENTRY.who, who);
