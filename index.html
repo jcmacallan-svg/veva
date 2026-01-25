@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Short Report Trainer</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background:#0b1220; color:#e9eefc; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    .card { background:#111b33; border:1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 16px; }
+    .topbar { display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom: 12px; flex-wrap:wrap; }
+    .badge { padding:6px 10px; border-radius:999px; background:#1a2a55; border:1px solid rgba(255,255,255,.10); font-weight:900; }
+    .progress { flex: 1; min-width: 240px; height: 10px; background: rgba(255,255,255,.10); border-radius: 999px; overflow:hidden; }
+    .progress > div { height: 100%; width: 0%; background: #7aa2ff; }
+    .scenarioHeader {
+      margin: 8px 0 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(122,162,255,.10);
+      border: 1px solid rgba(122,162,255,.25);
+    }
+    .scenarioHeader .big { font-size: 20px; font-weight: 950; letter-spacing: .2px; text-align:center; }
+    .scenarioHeader .line { margin-top: 10px; font-size: 18px; text-align:center; }
+    .scenarioHeader .label { font-weight: 500; opacity: .95; } /* NOT bold */
+    .scenarioHeader .value { font-weight: 900; }              /* bold values */
+
+    .grid { display:grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
+    @media (max-width: 860px){ .grid { grid-template-columns: 1fr; } }
+    img { width:100%; height:auto; border-radius: 12px; border:1px solid rgba(255,255,255,.10); background:#0b1220; }
+
+    label { display:block; font-weight: 800; margin: 10px 0 6px; }
+    input, textarea {
+      width:100%; box-sizing:border-box;
+      border-radius: 10px;
+      border:1px solid rgba(255,255,255,.14);
+      background:#0b1220;
+      color:#e9eefc;
+      padding: 10px 12px;
+      outline:none;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 540px){ .row { grid-template-columns: 1fr; } }
+
+    .hint {
+      margin-top:8px; padding:10px 12px; border-radius:10px;
+      background: rgba(255,205,117,.10);
+      border:1px solid rgba(255,205,117,.25);
+      color:#ffe2b0; display:none;
+    }
+    .error {
+      margin-top:10px; padding:10px 12px; border-radius:10px;
+      background: rgba(255,90,90,.12);
+      border:1px solid rgba(255,90,90,.25);
+      color:#ffd0d0; display:none;
+    }
+    .ok {
+      margin-top:10px; padding:10px 12px; border-radius:10px;
+      background: rgba(100,255,160,.12);
+      border:1px solid rgba(100,255,160,.25);
+      color:#c9ffe2; display:none;
+    }
+    button {
+      margin-top: 12px;
+      border:0; border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 950;
+      cursor:pointer;
+      background:#7aa2ff; color:#071022;
+    }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .footerNote { opacity:.75; font-size: 12px; margin-top: 10px; }
+    code { background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 8px; }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="badge" id="scenarioBadge">Scenario 0 of 0</div>
+    <div class="progress" aria-label="progress"><div id="progressBar"></div></div>
+    <div class="badge" id="progressText">0 / 0</div>
+  </div>
+
+  <div class="card">
+    <div class="scenarioHeader" aria-live="polite">
+      <div class="big" id="scenarioTitle">Scenario</div>
+
+      <div class="line">
+        <span class="label">Given location:</span>
+        <span class="value" id="givenLocation">—</span>
+      </div>
+      <div class="line">
+        <span class="label">Given date/time:</span>
+        <span class="value" id="givenDateTime">—</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <img id="scenarioImg" src="" alt="Scenario image" />
+      </div>
+
+      <div>
+        <div class="footerNote">
+          WHEN must be a DTG: <code>DDHHMM(A|B) MON YYYY</code> (A=winter time, B=summer time)
+        </div>
+
+        <form id="reportForm">
+          <label for="studentName">Student name(s)</label>
+          <input id="studentName" name="studentName" required placeholder="e.g., Alex & Sam" />
+
+          <label for="who">WHO (Callsign)</label>
+          <input id="who" name="who" required placeholder="e.g., Alpha 1 / Patrol 2 / Observer" />
+
+          <label for="what">WHAT</label>
+          <input id="what" name="what" required placeholder="Main group, text, size, color" />
+
+          <div class="row">
+            <div>
+              <label for="where">WHERE (MGRS)</label>
+              <input id="where" name="where" required placeholder="e.g., 31U FT 8301 6636" />
+              <div class="hint" id="mgrsHint"></div>
+            </div>
+            <div>
+              <label for="when">WHEN (DTG)</label>
+              <input id="when" name="when" required placeholder="e.g., 251435A JAN 2026" />
+            </div>
+          </div>
+
+          <label for="how">HOW</label>
+          <input id="how" name="how" required placeholder="Approach route, markings, contact person" />
+
+          <label for="note">NOTE / additional information (optional)</label>
+          <textarea id="note" name="note" placeholder="Optional"></textarea>
+
+          <input type="hidden" id="scenarioId" name="scenarioId" />
+          <button id="submitBtn" type="submit">Submit & Next</button>
+
+          <div class="error" id="errorBox"></div>
+          <div class="ok" id="okBox"></div>
+          <div class="footerNote">Submits to Google Forms and loads the next random scenario automatically.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Google Forms endpoint */
+const FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSe3-GOHTC225b7tcRCHNH5xK9X0lNplRsGfmlQcL_1pMVhcqA/formResponse";
+
+const ENTRY = {
+  studentName: "entry.697813513",
+  who:         "entry.950739082",
+  what:        "entry.724583571",
+  where:       "entry.1339994849",
+  when:        "entry.2133718989",
+  how:         "entry.464832105",
+  note:        "entry.2091019514",
+  scenarioId:  "entry.1482083770"
+};
+
+/**
+ * SCENARIOS (8)
+ * - date: YYYY-MM-DD
+ * - time: HH:MM (24h)
+ * - tz: A (winter) or B (summer)  -> NOT shown, but validated
+ * - mgrs8: 8-digit precision (10m): "31U FT 8301 6636"
+ *
+ * MGRS values are based on your provided 10-digit coordinates truncated to 8-digit.
+ */
+const SCENARIOS = [
+  { id:"S1", img:"images/img1.jpg", location:"Topsporthal Van der Knaap – Main entrance (Ede)",     date:"2026-01-25", time:"14:35", tz:"A", mgrs8:"31U FT 8301 6636" },
+  { id:"S2", img:"images/img2.jpg", location:"Bioscoop Pathé Ede – Parking lot",                    date:"2026-06-12", time:"09:10", tz:"B", mgrs8:"31U FT 8174 6614" },
+  { id:"S3", img:"images/img3.jpg", location:"Stadspoort Ede – Parking lot",                        date:"2026-03-03", time:"18:22", tz:"A", mgrs8:"31U FT 8197 6629" },
+  { id:"S4", img:"images/img4.jpg", location:"Kasteel Hoekelum – South side of the lake",          date:"2026-05-09", time:"12:05", tz:"B", mgrs8:"31U FT 8372 6611" },
+  { id:"S5", img:"images/img5.jpg", location:"Ziekenhuis Gelderse Vallei – Main entrance",         date:"2026-02-14", time:"07:50", tz:"A", mgrs8:"31U FT 8156 6680" },
+  { id:"S6", img:"images/img6.jpg", location:"Zwembad De Peppel – Front entrance",                 date:"2026-07-21", time:"16:40", tz:"B", mgrs8:"31U FT 8132 6842" },
+  { id:"S7", img:"images/img7.jpg", location:"Oude Kerk Ede (Grotestraat) – Side entrance",        date:"2026-11-08", time:"10:15", tz:"A", mgrs8:"31U FT 8317 6953" },
+  { id:"S8", img:"images/img8.jpg", location:"Station Ede-Wageningen – New location",              date:"2026-08-30", time:"20:05", tz:"B", mgrs8:"31U FT 8353 6744" },
+];
+
+/* ----------------------- Random order per session ----------------------- */
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+function loadOrder() {
+  const key = "scenarioOrder_v3";
+  const raw = sessionStorage.getItem(key);
+  if (raw) {
+    try {
+      const ids = JSON.parse(raw);
+      const map = new Map(SCENARIOS.map(s => [s.id, s]));
+      const ordered = ids.map(id => map.get(id)).filter(Boolean);
+      if (ordered.length === SCENARIOS.length) return ordered;
+    } catch(e){}
+  }
+  const ordered = shuffle([...SCENARIOS]);
+  sessionStorage.setItem(key, JSON.stringify(ordered.map(s => s.id)));
+  return ordered;
+}
+const ORDER = loadOrder();
+
+/* ------------------------------ UI refs ------------------------------ */
+const scenarioBadge = document.getElementById("scenarioBadge");
+const progressText  = document.getElementById("progressText");
+const progressBar   = document.getElementById("progressBar");
+const scenarioTitle = document.getElementById("scenarioTitle");
+const givenLocation = document.getElementById("givenLocation");
+const givenDateTime = document.getElementById("givenDateTime");
+const scenarioImg   = document.getElementById("scenarioImg");
+
+const form          = document.getElementById("reportForm");
+const submitBtn     = document.getElementById("submitBtn");
+const errorBox      = document.getElementById("errorBox");
+const okBox         = document.getElementById("okBox");
+const mgrsHint      = document.getElementById("mgrsHint");
+
+/* ----------------------- State ----------------------- */
+let idx = 0;
+const mgrsFails = {}; // hint after 2 failures per scenario
+
+/* ----------------------- DTG validation ----------------------- */
+const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+function parseDTG(input){
+  const s = input.trim().toUpperCase().replace(/\s+/g," ");
+  const m = s.match(/^(\d{2})(\d{2})(\d{2})([AB])\s+([A-Z]{3})\s+(\d{4})$/);
+  if(!m) return null;
+  return { day:+m[1], hour:+m[2], min:+m[3], tz:m[4], mon:m[5], year:+m[6] };
+}
+function validateDTG(input, scn){
+  const p = parseDTG(input);
+  if(!p) return { ok:false, msg:"WHEN must be: DDHHMM(A|B) MON YYYY (e.g., 251435A JAN 2026)." };
+
+  const [y,m,d] = scn.date.split("-").map(Number);
+  const [hh,mm] = scn.time.split(":").map(Number);
+  const expMon = MONTHS[m-1];
+
+  if (p.year !== y) return { ok:false, msg:"WHEN invalid." };
+  if (p.mon !== expMon) return { ok:false, msg:"WHEN invalid." };
+  if (p.day !== d) return { ok:false, msg:"WHEN invalid." };
+  if (p.hour !== hh || p.min !== mm) return { ok:false, msg:"WHEN invalid." };
+  if (p.tz !== scn.tz) return { ok:false, msg:"WHEN invalid." };
+
+  return { ok:true };
+}
+
+/* ----------------------- MGRS 8-digit validation within 10m -----------------------
+   Accepts: "31U FT 8301 6636" or without spaces.
+   Uses lightweight MGRS->UTM conversion and checks Euclidean distance.
+*/
+const E100K = ["ABCDEFGH", "JKLMNPQR", "STUVWXYZ"];
+const N100K = ["ABCDEFGHJKLMNPQRSTUV", "FGHJKLMNPQRSTUVABCDE"];
+const LAT_BANDS = "CDEFGHJKLMNPQRSTUVWX";
+
+function cleanMgrs(str){ return str.toUpperCase().trim().replace(/\s+/g,""); }
+function parseMgrs(mgrs){
+  const s = cleanMgrs(mgrs);
+  const m = s.match(/^(\d{1,2})([C-HJ-NP-X])([A-HJ-NP-Z]{2})(\d{4})(\d{4})$/);
+  if(!m) return null;
+  return {
+    zone: Number(m[1]),
+    band: m[2],
+    sq: m[3],
+    e: Number(m[4]) * 10, // 10m
+    n: Number(m[5]) * 10
+  };
+}
+function bandSouthLat(band){
+  const i = LAT_BANDS.indexOf(band);
+  if (i < 0) return null;
+  if (band === "X") return 72;
+  return -80 + i * 8;
+}
+function llToUtm(zone, lat, lon){
+  const a = 6378137.0;
+  const f = 1/298.257223563;
+  const k0 = 0.9996;
+  const e2 = f*(2-f);
+  const ep2 = e2/(1-e2);
+
+  const latRad = lat * Math.PI/180;
+  const lonRad = lon * Math.PI/180;
+  const lon0 = ((zone - 1) * 6 - 180 + 3) * Math.PI/180;
+
+  const N = a / Math.sqrt(1 - e2 * Math.sin(latRad)**2);
+  const T = Math.tan(latRad)**2;
+  const C = ep2 * Math.cos(latRad)**2;
+  const A = Math.cos(latRad) * (lonRad - lon0);
+
+  const M = a*((1 - e2/4 - 3*e2**2/64 - 5*e2**3/256)*latRad
+    - (3*e2/8 + 3*e2**2/32 + 45*e2**3/1024)*Math.sin(2*latRad)
+    + (15*e2**2/256 + 45*e2**3/1024)*Math.sin(4*latRad)
+    - (35*e2**3/3072)*Math.sin(6*latRad));
+
+  let easting = k0*N*(A + (1-T+C)*A**3/6 + (5 - 18*T + T**2 + 72*C - 58*ep2)*A**5/120) + 500000;
+  let northing = k0*(M + N*Math.tan(latRad)*(A**2/2 + (5 - T + 9*C + 4*C**2)*A**4/24
+                 + (61 - 58*T + T**2 + 600*C - 330*ep2)*A**6/720));
+  if (lat < 0) northing += 10000000;
+  return { e: easting, n: northing };
+}
+function utmNorthingAtLat(zone, lat){
+  const lon0 = (zone - 1) * 6 - 180 + 3;
+  return llToUtm(zone, lat, lon0).n;
+}
+function mgrsToUtm(mgrs){
+  const p = parseMgrs(mgrs);
+  if(!p) return null;
+
+  const zone = p.zone;
+  const band = p.band;
+  const setCol = (zone - 1) % 3;
+  const setRow = (zone - 1) % 2;
+
+  const colLetter = p.sq[0];
+  const rowLetter = p.sq[1];
+
+  const colIndex = E100K[setCol].indexOf(colLetter);
+  const rowIndex = N100K[setRow].indexOf(rowLetter);
+  if(colIndex < 0 || rowIndex < 0) return null;
+
+  const e100k = (colIndex + 1) * 100000;
+  let n100k = rowIndex * 100000;
+
+  const southLat = bandSouthLat(band);
+  if(southLat == null) return null;
+
+  const minN = utmNorthingAtLat(zone, southLat);
+  while (n100k + p.n < minN) n100k += 2000000;
+
+  return { zone, band, e: e100k + p.e, n: n100k + p.n };
+}
+function distanceMeters(utm1, utm2){
+  if(!utm1 || !utm2) return Infinity;
+  if(utm1.zone !== utm2.zone) return Infinity;
+  const dx = utm1.e - utm2.e;
+  const dy = utm1.n - utm2.n;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+function validateMGRS(input, scn){
+  const user = mgrsToUtm(input);
+  if(!user) return { ok:false, msg:"WHERE invalid." };
+
+  const exp = mgrsToUtm(scn.mgrs8);
+  if(!exp) return { ok:false, msg:"Internal scenario MGRS invalid." };
+
+  const dist = distanceMeters(user, exp);
+  if(dist > 10.0) return { ok:false, msg:"WHERE invalid." };
+  return { ok:true };
+}
+
+/* ----------------------- Rendering ----------------------- */
+function setProgress(){
+  scenarioBadge.textContent = `Scenario ${idx + 1} of ${ORDER.length}`;
+  progressText.textContent = `${idx + 1} / ${ORDER.length}`;
+  progressBar.style.width = `${((idx + 1) / ORDER.length) * 100}%`;
+}
+function renderScenario(){
+  const scn = ORDER[idx];
+  scenarioTitle.textContent = `Scenario ${scn.id}`;
+  givenLocation.textContent = scn.location;
+  givenDateTime.textContent = `${scn.date}  ${scn.time}`;
+  document.getElementById("scenarioId").value = scn.id;
+  scenarioImg.src = scn.img;
+
+  // reset fields except studentName
+  ["who","what","where","when","how","note"].forEach(id => document.getElementById(id).value = "");
+
+  errorBox.style.display = "none";
+  okBox.style.display = "none";
+
+  const fails = mgrsFails[scn.id] || 0;
+  if (fails >= 2){
+    mgrsHint.textContent = `MGRS (8-digit): ${scn.mgrs8}`;
+    mgrsHint.style.display = "block";
+  } else {
+    mgrsHint.style.display = "none";
+  }
+
+  setProgress();
+}
+renderScenario();
+
+/* ----------------------- Submit ----------------------- */
+function showError(msg){
+  errorBox.textContent = msg;
+  errorBox.style.display = "block";
+  okBox.style.display = "none";
+}
+function showOk(msg){
+  okBox.textContent = msg;
+  okBox.style.display = "block";
+  errorBox.style.display = "none";
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const scn = ORDER[idx];
+
+  const studentName = document.getElementById("studentName").value.trim();
+  const who   = document.getElementById("who").value.trim();
+  const what  = document.getElementById("what").value.trim();
+  const where = document.getElementById("where").value.trim();
+  const when  = document.getElementById("when").value.trim();
+  const how   = document.getElementById("how").value.trim();
+  const note  = document.getElementById("note").value.trim(); // optional
+
+  if(!studentName || !who || !what || !where || !when || !how){
+    showError("Please fill in all required fields (NOTE is optional).");
+    return;
+  }
+
+  const dtgCheck = validateDTG(when, scn);
+  if(!dtgCheck.ok){
+    showError(dtgCheck.msg);
+    return;
+  }
+
+  const mgrsCheck = validateMGRS(where, scn);
+  if(!mgrsCheck.ok){
+    mgrsFails[scn.id] = (mgrsFails[scn.id] || 0) + 1;
+    if(mgrsFails[scn.id] >= 2){
+      mgrsHint.textContent = `MGRS (8-digit): ${scn.mgrs8}`;
+      mgrsHint.style.display = "block";
+    }
+    showError(mgrsCheck.msg);
+    return;
+  }
+
+  // submit
+  const data = new URLSearchParams();
+  data.append(ENTRY.studentName, studentName);
+  data.append(ENTRY.who, who);
+  data.append(ENTRY.what, what);
+  data.append(ENTRY.where, where);
+  data.append(ENTRY.when, when);
+  data.append(ENTRY.how, how);
+  // NOTE optional - still safe to send empty; but only send when non-empty to reduce clutter
+  if(note) data.append(ENTRY.note, note);
+  data.append(ENTRY.scenarioId, scn.id);
+
+  submitBtn.disabled = true;
+  showOk("Submitted! Loading next scenario...");
+
+  fetch(FORM_ACTION, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data.toString()
+  });
+
+  // next
+  idx++;
+  if(idx >= ORDER.length){
+    submitBtn.disabled = true;
+    scenarioTitle.textContent = "Done!";
+    givenLocation.textContent = "All scenarios completed.";
+    givenDateTime.textContent = "You can close this tab.";
+    scenarioImg.style.display = "none";
+    form.style.display = "none";
+    return;
+  }
+
+  submitBtn.disabled = false;
+  renderScenario();
+});
+</script>
+</body>
+</html>
