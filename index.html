@@ -73,23 +73,17 @@
     .row { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media (max-width: 540px){ .row { grid-template-columns: 1fr; } }
 
-    .mgrsRow {
-      display:flex; gap:8px; align-items:center;
-    }
+    .mgrsRow { display:flex; gap:8px; align-items:center; }
     .mgrsFixed {
       width: 92px;
       text-align:center;
       opacity:.95;
       background: rgba(255,255,255,.06);
     }
-    .mgrsDigitsWrap {
-      display:flex; gap:8px; width:100%;
-    }
-    .mgrsDigitsWrap input {
-      width: 100%;
+    #mgrsDigits{
       text-align:center;
       font-variant-numeric: tabular-nums;
-      letter-spacing: .8px;
+      letter-spacing: .9px;
     }
 
     .hint, .error, .ok {
@@ -130,11 +124,11 @@
     <div class="scenarioHeader" aria-live="polite">
       <div class="big" id="scenarioTitle">Scenario</div>
       <div class="line">
-        <span class="label">Gegeven locatie:</span>
+        <span class="label">Locatie:</span>
         <span class="value" id="givenLocation">—</span>
       </div>
       <div class="line">
-        <span class="label">Gegeven datum/tijd:</span>
+        <span class="label">Datum/tijd:</span>
         <span class="value" id="givenDateTime">—</span>
       </div>
     </div>
@@ -146,35 +140,27 @@
 
       <div>
         <div class="footerNote">
-          <b>WHEN (DTG)</b> formaat: <code>DDHHMM(A|B) MON JJ</code> — voorbeeld: <code>251435A JAN 26</code><br>
-          <b>WHERE (MGRS)</b>: prefix staat vast, jij vult alleen de 8 cijfers in (4+4).
+          <b>WHEN (DTG)</b> formaat: <code>DDHHMM(A|B) MON JJ</code> — voorbeeld: <code>251435AJAN26</code><br>
+          <b>WHERE (MGRS – WGS84)</b>: prefix staat vast, jij vult alleen de 8 cijfers in (4+4).
         </div>
 
         <form id="reportForm" novalidate>
-          <label for="studentName">Naam student(en)</label>
-          <input id="studentName" required placeholder="Bijv. Alex & Sam" />
+          <label for="studentName">Naam student</label>
+          <input id="studentName" required placeholder="Bijv. Achternaam" />
 
           <label for="who">WHO (Callsign)</label>
-          <input id="who" required placeholder="Bijv. Alpha 1 / Patrol 2 / Observer" />
+          <input id="who" required placeholder="Bijv. Alpha / Bravo / Charlie / Delta" />
 
           <label for="what">WHAT</label>
-          <input id="what" required placeholder="Hoofdgroep, tekst, grootte, kleur" />
+          <input id="what" required placeholder="Hoofdgroep, subgroep, tekst, grootte, kleur" />
 
           <div class="row">
             <div>
               <label>WHERE (MGRS – WGS84)</label>
-           <label>WHERE (MGRS – WGS84)</label>
-<div class="mgrsRow">
-  <input class="mgrsFixed" value="31U FT" disabled />
-  <input
-    id="mgrsDigits"
-    required
-    placeholder="bijv. 8301 6636"
-    aria-label="MGRS 8 cijfers (4+4)"
-  />
-</div>
-<div class="hint" id="mgrsHint"></div>
-
+              <div class="mgrsRow">
+                <input class="mgrsFixed" value="31U FT" disabled aria-label="MGRS prefix" />
+                <input id="mgrsDigits" required placeholder="bijv. 8301 6636" aria-label="MGRS 8 cijfers (4+4)" />
+              </div>
               <div class="hint" id="mgrsHint"></div>
             </div>
 
@@ -227,7 +213,7 @@ const ENTRY = {
    Scenario data (8)
    - d: YYYY-MM-DD
    - t: HH:MM (24h)
-   - tz: A/B (Alpha winter / Bravo zomer) - niet getoond, wel gebruikt voor juiste DTG
+   - tz: A/B (Alpha winter / Bravo zomer)
    - mgrsDigits: "#### ####" (8 digits / 10m)
    ======================= */
 const SCENARIOS = [
@@ -246,8 +232,15 @@ const MONTHS_EN = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","
 
 function el(id){ return document.getElementById(id); }
 function show(node, yes){ node.style.display = yes ? "block" : "none"; }
+
 function normSpaces(s){ return (s || "").toUpperCase().trim().replace(/\s+/g," "); }
-function onlyDigits4(s){ return (s || "").replace(/\D/g,"").slice(0,4); }
+function onlyMgrsDigits(val){
+  return (val || "")
+    .replace(/[^0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 9); // "8301 6636"
+}
 
 function formatDateNL(iso){
   const [y,m,d] = iso.split("-").map(Number);
@@ -255,7 +248,6 @@ function formatDateNL(iso){
 }
 
 function expectedDTG(s){
-  // DDHHMM(A|B) MON JJ  -> JJ = laatste 2 van jaar
   const dd = s.d.slice(8,10);
   const hhmm = s.t.replace(":","");
   const mon = MONTHS_EN[Number(s.d.slice(5,7)) - 1];
@@ -276,7 +268,7 @@ function shuffle(arr){
 }
 
 function loadOrder(){
-  const key = "short_report_order_v2";
+  const key = "short_report_order_v3";
   const raw = sessionStorage.getItem(key);
   if(raw){
     try{
@@ -294,14 +286,14 @@ function loadOrder(){
 const ORDER = loadOrder();
 
 /* =======================
-   Pogingen per scenario
+   Attempts per scenario
    ======================= */
 let idx = 0;
 const failWhere = {}; // {scenarioId: count}
 const failWhen  = {}; // {scenarioId: count}
 
 /* =======================
-   UI render
+   UI
    ======================= */
 function setProgress(){
   el("scenarioBadge").textContent = `Scenario ${idx+1} van ${ORDER.length}`;
@@ -319,10 +311,8 @@ function renderScenario(){
 
   // reset velden behalve studentName
   ["who","what","how","note","when"].forEach(id => el(id).value = "");
-  el("mgrsE").value = "";
-  el("mgrsN").value = "";
+  el("mgrsDigits").value = "";
 
-  // meldingen/hints uit
   show(el("errorBox"), false);
   show(el("okBox"), false);
   show(el("mgrsHint"), false);
@@ -332,9 +322,6 @@ function renderScenario(){
 }
 renderScenario();
 
-/* =======================
-   Meldingen
-   ======================= */
 function error(msg){
   el("errorBox").textContent = msg;
   show(el("errorBox"), true);
@@ -346,11 +333,10 @@ function ok(msg){
   show(el("errorBox"), false);
 }
 
-/* =======================
-   Input helpers: force digits in MGRS boxes
-   ======================= */
-el("mgrsE").addEventListener("input", () => { el("mgrsE").value = onlyDigits4(el("mgrsE").value); });
-el("mgrsN").addEventListener("input", () => { el("mgrsN").value = onlyDigits4(el("mgrsN").value); });
+/* Input sanitation */
+el("mgrsDigits").addEventListener("input", () => {
+  el("mgrsDigits").value = onlyMgrsDigits(el("mgrsDigits").value);
+});
 
 /* =======================
    Submit
@@ -359,23 +345,24 @@ el("reportForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
   const s = ORDER[idx];
+
   const studentName = el("studentName").value.trim();
   const who  = el("who").value.trim();
   const what = el("what").value.trim();
   const how  = el("how").value.trim();
   const note = el("note").value.trim();
 
-  const e4 = onlyDigits4(el("mgrsE").value);
-  const n4 = onlyDigits4(el("mgrsN").value);
+  const mgrsInput = onlyMgrsDigits(el("mgrsDigits").value); // "8301 6636"
+  const userDigits = mgrsInput.replace(/\s+/g,"");         // "83016636"
   const whenInput = normSpaces(el("when").value);
 
-  // verplichte velden
+  // required
   if(!studentName || !who || !what || !how){
     error("Vul alle verplichte velden in (NOTE is optioneel).");
     return;
   }
-  if(e4.length !== 4 || n4.length !== 4){
-    error("WHERE is verplicht: vul 4 cijfers easting en 4 cijfers northing in.");
+  if(userDigits.length !== 8){
+    error("WHERE is verplicht: vul 8 cijfers in (4 + 4), bijv. 8301 6636.");
     return;
   }
   if(!whenInput){
@@ -383,18 +370,15 @@ el("reportForm").addEventListener("submit", (e) => {
     return;
   }
 
-  const expectedWhereDigits = s.mgrsDigits.replace(/\s+/g,""); // "83016636"
-  const userWhereDigits = (e4 + n4);                           // "83016636"
+  const expectedWhereDigits = s.mgrsDigits.replace(/\s+/g,"");
   const expectedWhen = expectedDTG(s);
 
-  let whereCorrect = (userWhereDigits === expectedWhereDigits);
-  let whenCorrect  = (whenInput === expectedWhen);
+  const whereCorrect = (userDigits === expectedWhereDigits);
+  const whenCorrect  = (whenInput === expectedWhen);
 
-  // default: block on first wrong attempt
-  let allowSubmit = true;
   let needsTenSeconds = false;
 
-  // WHERE wrong handling
+  // WHERE incorrect -> block first time; show answer second time but allow
   if(!whereCorrect){
     failWhere[s.id] = (failWhere[s.id] || 0) + 1;
 
@@ -404,14 +388,12 @@ el("reportForm").addEventListener("submit", (e) => {
       return;
     }
 
-    // after 2nd wrong: show correct answer + allow submission with their last wrong input
     el("mgrsHint").textContent = `Juiste WHERE (MGRS): 31U FT ${s.mgrsDigits}`;
     show(el("mgrsHint"), true);
-    allowSubmit = true;
     needsTenSeconds = true;
   }
 
-  // WHEN wrong handling
+  // WHEN incorrect -> block first time; show answer second time but allow
   if(!whenCorrect){
     failWhen[s.id] = (failWhen[s.id] || 0) + 1;
 
@@ -421,19 +403,15 @@ el("reportForm").addEventListener("submit", (e) => {
       return;
     }
 
-    // after 2nd wrong: show correct DTG + allow submission with their last wrong input
     el("dtgHint").innerHTML = `Juiste WHEN (DTG): <code>${expectedWhen}</code>`;
     show(el("dtgHint"), true);
-    allowSubmit = true;
     needsTenSeconds = true;
   }
 
-  if(!allowSubmit) return;
+  // Build WHERE full value for Forms
+  const whereFull = `31U FT ${mgrsInput}`;
 
-  // Build WHERE value for Google Forms (full)
-  const whereFull = `31U FT ${e4} ${n4}`;
-
-  // Submit EXACT student answers (even if wrong after 2 attempts)
+  // Submit exactly what the student entered (even if wrong after 2 attempts)
   const data = new URLSearchParams();
   data.append(ENTRY.studentName, studentName);
   data.append(ENTRY.who, who);
@@ -446,7 +424,6 @@ el("reportForm").addEventListener("submit", (e) => {
 
   el("submitBtn").disabled = true;
 
-  // feedback message + delay logic
   if(needsTenSeconds){
     ok("Je mag door. Het juiste antwoord blijft 10 seconden in beeld.");
   } else {
