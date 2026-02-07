@@ -375,16 +375,16 @@ el("reportForm").addEventListener("submit", (e) => {
   const expected8 = s.mgrsDigits.replace(/\s+/g,""); // "83016636"
   const expectedWhen = expectedDTG(s);
 
-  // 10m tolerant: difference of at most 1 grid step (10m) overall distance
-  const ue = parseInt(user8.slice(0,4), 10);
-  const un = parseInt(user8.slice(4,8), 10);
-  const ee = parseInt(expected8.slice(0,4), 10);
-  const en = parseInt(expected8.slice(4,8), 10);
+  // 100m tolerant: difference of at most 1 grid step (100m) overall distance
+  const ue = parseInt(user8.slice(0,4), 100);
+  const un = parseInt(user8.slice(4,8), 100);
+  const ee = parseInt(expected8.slice(0,4), 100);
+  const en = parseInt(expected8.slice(4,8), 100);
 
-  const dx = (ue - ee) * 10;
-  const dy = (un - en) * 10;
+  const dx = (ue - ee) * 100;
+  const dy = (un - en) * 100;
   const dist = Math.hypot(dx, dy);
-  const whereCorrect = (dist <= 10);
+  const whereCorrect = (dist <= 100);
 
   const whenCorrect = (
   normalizeDTG(whenInput) === normalizeDTG(expectedWhen)
